@@ -1,9 +1,9 @@
 {
- "version": "2026.11.06.1524",
- "summary": "Spider Diagram now checks for updates every half a minute while it's open, so new versions show up straight away.",
+ "version": "2026.11.10.1436",
+ "summary": "Notes are much nicer to write in: highlighting, a tidier toolbar, working shortcuts and undo, and fixes for wrapping, spell checking and pasting.",
  "sha256": {
-  "spider-diagram-linux": "10d9c1078fa2dc00b5aac7fd0defc09e6fc0f93632f463dfa125596bcb9c9e39",
-  "spider-diagram-windows.cmd": "316c48741f3eaeac7a193bffd04f88840fe5762cb9d8b6bafa6ff5eae28b220f",
-  "spider-diagram-chromeos.html": "d452c85daa14f626560b8f2a7194cfdfe0e681437775c613946aea15d89547d8"
+  "spider-diagram-linux": "52678734eeb54ac03fd1d1e6b637853a597e9929a9a2cc02a0655c295e83e6f8",
+  "spider-diagram-windows.cmd": "834e31468a71b23d1892d6ec701be2cc5213709752ef151a5a99b27b8a4e6060",
+  "spider-diagram-chromeos.html": "4a0ab79f581f80f2f8b68f9ac0ab07828ec80f01c8e2b8f1e9bcf20e269b2e6f"
  }
 }

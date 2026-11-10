@@ -211,9 +211,23 @@
   #notesResize { position: absolute; left: -4px; top: 0; bottom: 0; width: 8px; cursor: col-resize; z-index: 5; }
   .notes-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
   #notesTitle { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .notes-tools { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--row2); }
-  .notes-tools button { padding: 4px 8px; min-width: 30px; }
-  .notes-tools select { padding: 4px 6px; }
+  .notes-tools { display: flex; flex-direction: column; gap: 4px; padding: 6px 10px; border-bottom: 1px solid var(--line); background: var(--row2); }
+  .nt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }   /* first row: text formatting; second: lists, links, pictures, tables */
+  /* Every button is the same size, at the same spacing, so the two rows line up in columns; the line
+     between groups sits in the gap instead of taking room. */
+  .notes-tools button:not(.menu button) { position: relative; border-color: transparent; background: none; padding: 0; width: 30px; min-width: 30px; height: 30px; }
+  .notes-tools button:not(.menu button):hover { background: var(--hover); }
+  .notes-tools button.on:not(.menu button) { background: var(--on-bg); border-color: var(--on-line); }
+  .notes-tools button[aria-haspopup]::after { content: ''; position: absolute; right: 3px; bottom: 3px; border: 3px solid transparent; border-right-color: currentColor; border-bottom-color: currentColor; opacity: .6; }   /* it opens a menu */
+  .notes-tools select { padding: 4px 6px; height: 30px; }
+  .notes-tools .menu-wrap { position: relative; display: inline-flex; }
+  .nt-group { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+  .nt-group + .nt-group::before { content: ''; position: absolute; left: -4.5px; top: 6px; bottom: 6px; width: 1px; background: var(--line); }
+  .nt-group.nt-end { margin-left: auto; }
+  .nt-group.nt-end::before { display: none; }
+  .nt-menu { width: 210px; }
+  .nt-swatch { width: 16px; height: 16px; border-radius: 4px; background: #ffe066; margin-right: 8px; border: 1px solid rgba(0, 0, 0, .15); }
+  .nt-swatch[data-c="green"] { background: #b9f0a8; } .nt-swatch[data-c="blue"] { background: #aed8ff; } .nt-swatch[data-c="pink"] { background: #ffbddc; }
   ::highlight(note-wl) { color: var(--accent); }
   ::highlight(note-missing) { color: var(--muted); text-decoration: underline dashed; }
   ::highlight(note-tag) { color: var(--accent); background-color: var(--on-bg); }
@@ -230,10 +244,11 @@
   .notes-links input:hover, .notes-links input:focus { border-color: var(--line); background: var(--editor); outline: none; }
   .notes-links .lbl { flex: none; max-width: 70%; font-weight: 600; }
   .notes-links .add input { flex: 1; border-color: var(--line); }
-  #notesBody { flex: 1; overflow: auto; padding: 14px 18px; outline: none; font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; }
+  #notesBody { flex: 1; overflow: auto; padding: 14px 18px; outline: none; font-size: 15px; line-height: 1.55; overflow-wrap: break-word; }
   #notesBody[contenteditable="false"] { color: var(--muted); }
   #notesBody:empty::before { content: attr(data-placeholder); color: var(--muted); pointer-events: none; }
   #notesBody p { margin: 0 0 8px; }
+  #notesBody mark[data-c="green"] { background: #b9f0a8; } #notesBody mark[data-c="blue"] { background: #aed8ff; } #notesBody mark[data-c="pink"] { background: #ffbddc; }
   #notesBody h2 { font-size: 20px; margin: 16px 0 6px; }
   #notesBody h3 { font-size: 17px; margin: 14px 0 4px; }
   #notesBody ul, #notesBody ol { margin: 0 0 8px; padding-left: 24px; }
@@ -328,6 +343,8 @@
   <symbol id="i-list-ordered" viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></symbol>
   <symbol id="i-divider" viewBox="0 0 24 24"><path d="M3 12h18M8 8l4-4 4 4M16 16l-4 4-4-4"/></symbol>
   <symbol id="i-clear-format" viewBox="0 0 24 24"><path d="M4 7V4h16v3M5 20h6M13 4 8 20M15 15l5 5M20 15l-5 5"/></symbol>
+  <symbol id="i-highlight" viewBox="0 0 24 24"><path d="m9 11-5 5v3h3l5-5M14.5 5.5l4 4M9 11l6.5-6.5a1.5 1.5 0 0 1 2 0l2 2a1.5 1.5 0 0 1 0 2L13 15M3 21h7"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 10h16M4 15h16M10 5v14"/></symbol>
   <symbol id="i-bold" viewBox="0 0 24 24"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></symbol>
   <symbol id="i-italic" viewBox="0 0 24 24"><path d="M19 4h-9M14 20H5M15 4 9 20"/></symbol>
   <symbol id="i-underline" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4M4 20h16"/></symbol>
@@ -557,6 +574,11 @@
 <script id="changelog" type="application/json">
 [
  {
+  "version": "2026.11.10.1436",
+  "summary": "Notes are much nicer to write in: highlighting, a tidier toolbar, working shortcuts and undo, and fixes for wrapping, spell checking and pasting.",
+  "notes": "Highlight text in four colours from the new Highlight menu, with Ctrl+Shift+H, or by typing ==text==; highlights keep their colours in Word and copied outlines. The toolbar is two neat rows: text formatting on top (with the paragraph style on the right), lists, links, pictures and tables below. Ctrl+B, Ctrl+I, Ctrl+U and Ctrl+Shift+X format your notes instead of triggering browser shortcuts, and no longer jump the cursor when you type quickly. Notes have their own undo and redo (Ctrl+Z, Ctrl+Y). Lines no longer break in the middle of words, spell and grammar checkers can read sentences that run through formatting, and pasting into notes right after switching windows no longer also pastes a bubble."
+ },
+ {
   "version": "2026.11.06.1524",
   "summary": "Spider Diagram now checks for updates every half a minute while it's open, so new versions show up straight away.",
   "notes": "Updates used to be checked only when the app started and every 6 hours after. Now it checks quietly every 30 seconds: no \"Checking…\" each time, a check that fails while you're offline doesn't complain, and if you click Later the notice stays away until a newer version comes out."
@@ -691,26 +713,60 @@
     <button id="notesClose" class="icon" title="Close notes (Ctrl+Enter)"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
   </div>
   <div class="notes-tools">
-    <select id="nBlock" title="Paragraph style">
-      <option value="p">Normal</option><option value="h2">Heading</option><option value="h3">Subheading</option>
-      <option value="blockquote">Quote</option><option value="pre">Code</option>
-    </select>
-    <button data-cmd="bold" title="Bold (Ctrl+B)"><svg class="ic" aria-hidden="true"><use href="#i-bold"/></svg></button>
-    <button data-cmd="italic" title="Italic (Ctrl+I)"><svg class="ic" aria-hidden="true"><use href="#i-italic"/></svg></button>
-    <button data-cmd="underline" title="Underline (Ctrl+U)"><svg class="ic" aria-hidden="true"><use href="#i-underline"/></svg></button>
-    <button data-cmd="strikeThrough" title="Strikethrough"><svg class="ic" aria-hidden="true"><use href="#i-strike"/></svg></button>
-    <button data-cmd="insertUnorderedList" title="Bullet list (Tab / Shift+Tab to indent)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg></button>
-    <button data-cmd="insertOrderedList" title="Numbered list"><svg class="ic" aria-hidden="true"><use href="#i-list-ordered"/></svg></button>
-    <button id="nLink" title="Add or change a link (Ctrl+K)"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg></button>
-    <button data-cmd="unlink" title="Remove link"><svg class="ic" aria-hidden="true"><use href="#i-unlink"/></svg></button>
-    <button id="nImage" title="Insert pictures — you can also paste or drop them in"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg> Picture</button>
-    <select id="nTable" title="Tables">
-      <option value="">Table…</option><option value="insert">Insert table</option>
-      <option value="row">Add row below</option><option value="col">Add column right</option>
-      <option value="delrow">Delete row</option><option value="delcol">Delete column</option><option value="deltable">Delete table</option>
-    </select>
-    <button data-cmd="insertHorizontalRule" title="Divider line"><svg class="ic" aria-hidden="true"><use href="#i-divider"/></svg></button>
-    <button data-cmd="removeFormat" title="Clear formatting"><svg class="ic" aria-hidden="true"><use href="#i-clear-format"/></svg></button>
+    <div class="nt-row">   <!-- text formatting -->
+      <span class="nt-group">
+        <button data-cmd="bold" title="Bold (Ctrl+B)"><svg class="ic" aria-hidden="true"><use href="#i-bold"/></svg></button>
+        <button data-cmd="italic" title="Italic (Ctrl+I)"><svg class="ic" aria-hidden="true"><use href="#i-italic"/></svg></button>
+        <button data-cmd="underline" title="Underline (Ctrl+U)"><svg class="ic" aria-hidden="true"><use href="#i-underline"/></svg></button>
+        <button data-cmd="strikeThrough" title="Strikethrough (Ctrl+Shift+X)"><svg class="ic" aria-hidden="true"><use href="#i-strike"/></svg></button>
+        <div class="menu-wrap">
+          <button id="nMarkBtn" aria-haspopup="true" aria-expanded="false" title="Highlight (Ctrl+Shift+H, or type ==text==)"><svg class="ic" aria-hidden="true"><use href="#i-highlight"/></svg></button>
+          <div id="nMarkMenu" class="menu list left nt-menu" hidden>
+            <button data-mark="yellow"><span class="nt-swatch"></span>Yellow<span class="kb">Ctrl+Shift+H</span></button>
+            <button data-mark="green"><span class="nt-swatch" data-c="green"></span>Green</button>
+            <button data-mark="blue"><span class="nt-swatch" data-c="blue"></span>Blue</button>
+            <button data-mark="pink"><span class="nt-swatch" data-c="pink"></span>Pink</button>
+            <hr>
+            <button data-mark="none">Remove highlight</button>
+          </div>
+        </div>
+      </span>
+      <span class="nt-group">
+        <button data-cmd="removeFormat" title="Clear formatting"><svg class="ic" aria-hidden="true"><use href="#i-clear-format"/></svg></button>
+      </span>
+      <span class="nt-group nt-end">
+        <select id="nBlock" title="Paragraph style">
+          <option value="p">Normal</option><option value="h2">Heading</option><option value="h3">Subheading</option>
+          <option value="blockquote">Quote</option><option value="pre">Code</option>
+        </select>
+      </span>
+    </div>
+    <div class="nt-row">   <!-- lists, links and things to insert -->
+      <span class="nt-group">
+        <button data-cmd="insertUnorderedList" title="Bullet list (type - and a space; Tab / Shift+Tab to indent)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg></button>
+        <button data-cmd="insertOrderedList" title="Numbered list (type 1. and a space)"><svg class="ic" aria-hidden="true"><use href="#i-list-ordered"/></svg></button>
+      </span>
+      <span class="nt-group">
+        <button id="nLink" title="Add or change a link (Ctrl+K)"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg></button>
+        <button data-cmd="unlink" title="Remove link"><svg class="ic" aria-hidden="true"><use href="#i-unlink"/></svg></button>
+      </span>
+      <span class="nt-group">
+        <button id="nImage" title="Insert pictures (you can also paste or drop them in)"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></button>
+        <div class="menu-wrap">
+          <button id="nTableBtn" aria-haspopup="true" aria-expanded="false" title="Tables"><svg class="ic" aria-hidden="true"><use href="#i-table"/></svg></button>
+          <div id="nTableMenu" class="menu list left nt-menu" hidden>
+            <button data-table="insert">Insert table</button>
+            <hr>
+            <button data-table="row">Add row below</button>
+            <button data-table="col">Add column right</button>
+            <button data-table="delrow">Delete row</button>
+            <button data-table="delcol">Delete column</button>
+            <button data-table="deltable">Delete table</button>
+          </div>
+        </div>
+        <button data-cmd="insertHorizontalRule" title="Divider line (type --- and Enter)"><svg class="ic" aria-hidden="true"><use href="#i-divider"/></svg></button>
+      </span>
+    </div>
   </div>
   <div id="notesBody" contenteditable="true" spellcheck="true" data-placeholder="Notes for this bubble: write as much as you like. [[Name]] links to another bubble, #tag tags this one, and Markdown works (# heading, - list, **bold**)."></div>
   <div id="notesLinks" class="notes-links"></div>
@@ -3276,8 +3332,8 @@ document.addEventListener('cut', e => {
 });
 let pasteKids = false;
 document.addEventListener('paste', e => {
+  clearTimeout(pasteTimer);   // a real paste arrived (even one into the notes): the fallback below isn't needed
   if (clipboardIgnored(e)) return;
-  clearTimeout(pasteTimer);
   const data = e.clipboardData, f = [...(data?.files || [])].find(f => f.type.startsWith('image/'));
   if (f) { e.preventDefault(); return setImage(cur(), f); }
   let c = null;
@@ -3341,7 +3397,9 @@ document.addEventListener('keydown', e => {
     else if (lk === 'x' && selLink == null) cutBranch();
     else if (lk === 'v') {   // the paste event does it; this is for browsers that don't send one
       pasteKids = e.shiftKey;
-      clearTimeout(pasteTimer); pasteTimer = setTimeout(() => pasteClip(clip, pasteTarget(), pasteKids), 200);
+      // Right after switching back to the window, this key can arrive before the notes (or a text box)
+      // has the focus back, so check again before pasting bubbles.
+      clearTimeout(pasteTimer); pasteTimer = setTimeout(() => { if (!editing && !document.activeElement?.closest?.('#notes, input, textarea, select, [contenteditable]')) pasteClip(clip, pasteTarget(), pasteKids); }, 200);
     }
     else if (lk === 'd') { e.preventDefault(); duplicate(); }
     else if (lk === 's') { e.preventDefault(); e.shiftKey ? saveAs() : save(); }
@@ -3643,6 +3701,7 @@ function notesToMarkdown(html, { plain = false, headings = '###' } = {}) {
       if (t === 'B' || t === 'STRONG') out += wrap('**', inner());
       else if (t === 'I' || t === 'EM') out += wrap('*', inner());
       else if (t === 'S' || t === 'STRIKE' || t === 'DEL') out += wrap('~~', inner());
+      else if (t === 'MARK') out += wrap('==', inner());   // (Obsidian's highlight; it has just the one colour)
       else if (t === 'CODE') { const code = c.textContent; out += plain ? code : code.includes('`') ? '`` ' + code + ' ``' : '`' + code + '`'; }
       else if (t === 'A') {
         const href = c.getAttribute('href'), label = inner().trim();
@@ -3737,7 +3796,8 @@ function outlineHTML() {
   let html = '', open = -1;
   const close = to => { while (open > to) { html += '</li></ul>'; open--; } };
   for (const b of outlineBlocks()) {
-    const notes = b.node?.notes ? sanitizeNotes(b.node.notes) : '';
+    // (highlights get their colour written in, since Google Docs and Word don't know our colour names)
+    const notes = b.node?.notes ? sanitizeNotes(b.node.notes).replace(/<mark(?: data-c="(\w+)")?>/g, (_, c) => `<mark style="background-color:${{ green: '#b9f0a8', blue: '#aed8ff', pink: '#ffbddc' }[c] || '#ffe066'}">`) : '';
     const links = b.links.length ? `<p><i>Linked to:</i> ${esc(b.links.join(', '))}</p>` : '';
     if (b.type !== 'li') {
       const tag = { title: 'h1', h: 'h2', h2: 'h3' }[b.type];
@@ -3849,7 +3909,7 @@ async function docxBlob(withPicture) {
     if (f.i) x += '<w:i/>';
     if (f.s) x += '<w:strike/>';
     if (f.link) x += '<w:color w:val="0563C1"/>';
-    if (f.mark) x += '<w:highlight w:val="yellow"/>';
+    if (f.mark) x += `<w:highlight w:val="${{ green: 'green', blue: 'cyan', pink: 'magenta' }[f.mark] || 'yellow'}"/>`;
     if (f.u || f.link) x += '<w:u w:val="single"/>';
     if (f.sub || f.sup) x += `<w:vertAlign w:val="${f.sub ? 'subscript' : 'superscript'}"/>`;
     return x ? `<w:rPr>${x}</w:rPr>` : '';
@@ -3873,7 +3933,7 @@ async function docxBlob(withPicture) {
         else if (t === 'U') out += runs(kids, { ...f, u: true }, width);
         else if (t === 'S' || t === 'STRIKE' || t === 'DEL') out += runs(kids, { ...f, s: true }, width);
         else if (t === 'SUB' || t === 'SUP') out += runs(kids, { ...f, [t.toLowerCase()]: true }, width);
-        else if (t === 'MARK') out += runs(kids, { ...f, mark: true }, width);
+        else if (t === 'MARK') out += runs(kids, { ...f, mark: c.getAttribute('data-c') || 'yellow' }, width);
         else if (t === 'CODE') out += runs(kids, { ...f, code: true }, width);
         else if (t === 'BR') out += '<w:r><w:br/></w:r>';
         else if (t === 'A') out += `<w:hyperlink r:id="${linkRid(c.getAttribute('href'))}">${runs(kids, { ...f, link: true }, width)}</w:hyperlink>`;
@@ -4291,6 +4351,7 @@ new ResizeObserver(() => pendingFit ? fit() : applyView()).observe(svg);
 const notesPanel = $('#notes'), notesEl = $('#notesBody');
 let notesFor = null, notesTimer = null, notesCommitted = false, notesRange = null;
 const notesOpen = () => !notesPanel.hidden;
+const MARK_COLOURS = ['green', 'blue', 'pink'];   // highlight colours besides plain (yellow) <mark>
 const NOTE_TAGS = {   // tag -> true (keep), a replacement tag, or 0 (unwrap: keep the contents only)
   P: 1, BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, STRIKE: 1, DEL: 1, SUB: 1, SUP: 1, MARK: 1, CODE: 1, PRE: 1,
   H1: 'h2', H2: 1, H3: 1, H4: 'h3', H5: 'h3', H6: 'h3', UL: 1, OL: 1, LI: 1, BLOCKQUOTE: 1, A: 1, IMG: 1, HR: 1,
@@ -4314,6 +4375,7 @@ function sanitizeNotes(html) {
       const el = document.createElement(typeof rule === 'string' ? rule : tag.toLowerCase());
       if (tag === 'A') { el.setAttribute('href', node.getAttribute('href').trim()); el.setAttribute('rel', 'noopener noreferrer'); }
       if (tag === 'IMG') el.setAttribute('src', node.getAttribute('src'));
+      if (tag === 'MARK' && MARK_COLOURS.includes(node.getAttribute('data-c'))) el.setAttribute('data-c', node.getAttribute('data-c'));
       if (tag === 'TD' || tag === 'TH') for (const a of ['colspan', 'rowspan']) {
         const v = parseInt(node.getAttribute(a), 10);
         if (v > 1 && v < 100) el.setAttribute(a, v);
@@ -4360,9 +4422,55 @@ function showNotesFor(id) {
   notesEl.innerHTML = n ? sanitizeNotes(n.notes) : '';
   notesEl.contentEditable = n ? 'true' : 'false';
   notesCommitted = false;
+  notesPast = []; notesFuture = []; notesLastSave = 0;
   markWikiLinks();
 }
 function notesChanged() { clearTimeout(notesTimer); notesTimer = setTimeout(flushNotes, 400); }
+// The notes keep their own undo history (the browser's misses changes made by highlighting, Markdown
+// shortcuts and tables, and then gets out of step). Typing is saved in bursts: a pause of a second
+// starts a new step. Formatting and the like are a step each. Each step is the notes and where the
+// cursor was (as a count of characters, since the elements themselves get replaced).
+let notesPast = [], notesFuture = [], notesLastSave = 0;
+function caretChars() {
+  const s = getSelection();
+  if (!s.rangeCount || !notesEl.contains(s.getRangeAt(0).startContainer)) return null;
+  const r = document.createRange(), at = s.getRangeAt(0);
+  r.selectNodeContents(notesEl); r.setEnd(at.startContainer, at.startOffset);
+  const start = r.toString().length;
+  return [start, start + at.toString().length];
+}
+function setCaretChars(c) {
+  if (!c) return;
+  const w = document.createTreeWalker(notesEl, NodeFilter.SHOW_TEXT), r = document.createRange();
+  let n = 0, set = 0;
+  for (let t = w.nextNode(); t && set < 2; t = w.nextNode()) {
+    const len = t.nodeValue.length;
+    if (set === 0 && c[0] <= n + len) { r.setStart(t, c[0] - n); set = 1; }
+    if (set === 1 && c[1] <= n + len) { r.setEnd(t, c[1] - n); set = 2; }
+    n += len;
+  }
+  if (set === 0) { r.selectNodeContents(notesEl); r.collapse(false); } else if (set === 1) r.collapse(true);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+// Save the notes as they are now as an undo step (typing: only if it's been a while since the last).
+function saveNotesStep(typing = false) {
+  const now = Date.now();
+  if (typing && now - notesLastSave < 1000) { notesLastSave = now; return; }
+  notesLastSave = typing ? now : 0;
+  const html = notesEl.innerHTML;
+  if (notesPast.at(-1)?.html !== html) notesPast.push({ html, caret: caretChars() });
+  if (notesPast.length > 200) notesPast.shift();
+  notesFuture = [];
+}
+function notesUndo(redo = false) {
+  const from = redo ? notesFuture : notesPast, to = redo ? notesPast : notesFuture, step = from.pop();
+  if (!step) return;
+  to.push({ html: notesEl.innerHTML, caret: caretChars() });
+  notesEl.innerHTML = step.html;
+  setCaretChars(step.caret);
+  notesLastSave = 0;
+  notesChanged(); markWikiLinks(); syncNotesTools();
+}
 // Write the panel's content into the bubble. The first change of each visit is one undo step.
 function flushNotes() {
   clearTimeout(notesTimer); notesTimer = null;
@@ -4385,17 +4493,79 @@ document.addEventListener('selectionchange', () => {
   if (s.rangeCount && notesEl.contains(s.getRangeAt(0).commonAncestorContainer)) { notesRange = s.getRangeAt(0).cloneRange(); syncNotesTools(); }
 });
 function restoreNotesRange() {
+  // Only when the cursor has really left the notes (a toolbar button or menu took the focus): the
+  // remembered spot lags a moment behind typing, so restoring it mid-typing (a shortcut key) would
+  // jump the cursor back a few letters.
+  const s = getSelection();
+  if (document.activeElement === notesEl && s.rangeCount && notesEl.contains(s.getRangeAt(0).commonAncestorContainer)) return;
   notesEl.focus();
   if (notesRange && notesEl.contains(notesRange.commonAncestorContainer)) { const s = getSelection(); s.removeAllRanges(); s.addRange(notesRange); }
 }
+try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch {}   // Enter makes a <p> in every browser
 function noteCmd(cmd, value = null) {
   if (!notesEl.isContentEditable) return;
   restoreNotesRange();
+  saveNotesStep();
   document.execCommand('styleWithCSS', false, false);
   document.execCommand(cmd, false, value);
   notesChanged(); syncNotesTools();
 }
 const insertNoteHTML = html => noteCmd('insertHTML', sanitizeNotes(html));
+// Highlight the selected text in a colour ('yellow', 'green', 'blue', 'pink'), or take highlighting
+// off it (null). With no colour given, it toggles: off if it's all highlighted already, otherwise in
+// the colour last used. Only the selected part changes: a highlight running past the selection is
+// split, so the rest keeps its colour.
+let lastMark = 'yellow';
+function markNotes(colour) {
+  if (!notesEl.isContentEditable) return;
+  restoreNotesRange();
+  const sel = getSelection();
+  if (!sel.rangeCount || sel.isCollapsed || !notesEl.contains(sel.getRangeAt(0).commonAncestorContainer)) return toast('Select some text to highlight first');
+  const r = sel.getRangeAt(0), markOf = t => { const m = t.parentElement.closest('mark'); return m && notesEl.contains(m) ? m : null; };
+  // The text nodes in the selection, split so they're exactly the selected parts.
+  const walker = document.createTreeWalker(r.commonAncestorContainer.nodeType === Node.TEXT_NODE ? r.commonAncestorContainer.parentNode : r.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+  const texts = [];
+  for (let t = walker.nextNode(); t; t = walker.nextNode()) if (r.intersectsNode(t) && t.nodeValue.trim()) texts.push(t);
+  const parts = texts.map(t => {
+    let from = t === r.startContainer ? r.startOffset : 0, to = t === r.endContainer ? r.endOffset : t.nodeValue.length;
+    if (to < t.nodeValue.length) t.splitText(to);
+    return from > 0 ? t.splitText(from) : t;
+  }).filter(t => t.nodeValue);
+  if (!parts.length) return;
+  saveNotesStep();
+  if (colour === undefined) colour = parts.every(markOf) ? null : lastMark;
+  if (colour) lastMark = colour;
+  for (const t of parts) {
+    let m = markOf(t);
+    if (m) {   // split the highlight round this text, so only this part changes
+      const before = document.createRange(), after = document.createRange();
+      before.setStart(m, 0); before.setEndBefore(t);   // (any bold etc. it's inside gets split too)
+      after.setStartAfter(t); after.setEnd(m, m.childNodes.length);
+      for (const [range, place] of [[before, 'before'], [after, 'after']]) {
+        const bit = range.extractContents();
+        if (!bit.textContent) continue;
+        const copy = m.cloneNode(false); copy.append(bit); m[place](copy);
+      }
+      if (colour) colour === 'yellow' ? m.removeAttribute('data-c') : m.setAttribute('data-c', colour);
+      else m.replaceWith(...m.childNodes);
+    } else if (colour) {
+      m = document.createElement('mark');
+      if (colour !== 'yellow') m.setAttribute('data-c', colour);
+      t.replaceWith(m); m.append(t);
+    }
+  }
+  // Tidy up after splitting: drop formatting left with nothing in it, and join neighbouring highlights
+  // of the same colour back into one.
+  for (const el of notesEl.querySelectorAll('mark, b, strong, i, em, u, s, code, sub, sup')) if (!el.textContent && !el.querySelector('img, br')) el.remove();
+  for (const m of [...notesEl.querySelectorAll('mark')]) {
+    const next = m.nextSibling;
+    if (next?.nodeName === 'MARK' && next.getAttribute('data-c') === m.getAttribute('data-c')) { next.prepend(...m.childNodes); m.remove(); }
+  }
+  const keep = document.createRange();   // keep the same text selected
+  keep.setStart(parts[0], 0); keep.setEnd(parts[parts.length - 1], parts[parts.length - 1].nodeValue.length);
+  sel.removeAllRanges(); sel.addRange(keep);
+  notesChanged();
+}
 function caretBlock() {
   const s = getSelection();
   let node = s.rangeCount ? s.getRangeAt(0).startContainer : null;
@@ -4427,6 +4597,7 @@ function addLink() {
   else noteCmd('createLink', url);
 }
 function tableAction(action) {
+  saveNotesStep();
   restoreNotesRange();
   if (action === 'insert') {
     const row = tag => `<tr>${`<${tag}><br></${tag}>`.repeat(3)}</tr>`;
@@ -4450,8 +4621,20 @@ function tableAction(action) {
   notesChanged();
 }
 
-notesEl.addEventListener('input', e => { notesChanged(); if (e.inputType === 'insertText' && e.data) markdownShortcut(e.data); markWikiLinks(); });
+notesEl.addEventListener('input', e => {
+  notesChanged();
+  // A Markdown shortcut leaves a zero-width space to type after; once there's real text it's dropped,
+  // or spell checkers see it stuck to the word and can't read the word (or sentence).
+  const s = getSelection(), t = s.rangeCount && s.getRangeAt(0).startContainer;
+  if (t && t.nodeType === Node.TEXT_NODE && t.nodeValue.length > 1 && t.nodeValue.includes('\u200b')) {
+    const at = s.getRangeAt(0).startOffset, before = t.nodeValue.slice(0, at).split('\u200b').length - 1;
+    t.nodeValue = t.nodeValue.replace(/\u200b/g, ''); s.collapse(t, at - before);
+  }
+  if (e.inputType === 'insertText' && e.data) markdownShortcut(e.data);
+  markWikiLinks();
+});
 notesEl.addEventListener('focusin', () => { notesCommitted = false; });
+notesEl.addEventListener('beforeinput', e => { if (e.inputType.startsWith('history')) e.preventDefault(); else saveNotesStep(e.inputType === 'insertText' || e.inputType.startsWith('delete')); });
 notesEl.addEventListener('blur', () => { flushNotes(); markWikiLinks(); });
 notesEl.addEventListener('keydown', e => {
   const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
@@ -4464,6 +4647,12 @@ notesEl.addEventListener('keydown', e => {
   else if (mod && e.key === 'Enter') { e.preventDefault(); closeNotes(); }
   else if (mod && k === 's') { e.preventDefault(); flushNotes(); e.shiftKey ? saveAs() : save(); }
   else if (mod && k === 'k') { e.preventDefault(); addLink(); }
+  else if (mod && !e.altKey && (k === 'z' || k === 'y')) { e.preventDefault(); notesUndo(k === 'y' || e.shiftKey); }
+  else if (mod && e.shiftKey && k === 'h') { e.preventDefault(); markNotes(); }
+  // Formatting keys are done here, not left to the browser: some browsers use them for their own things
+  // (in Firefox, Ctrl+B opens bookmarks and Ctrl+U the page source).
+  else if (mod && !e.altKey && !e.shiftKey && ['b', 'i', 'u'].includes(k)) { e.preventDefault(); noteCmd({ b: 'bold', i: 'italic', u: 'underline' }[k]); }
+  else if (mod && e.shiftKey && k === 'x') { e.preventDefault(); noteCmd('strikeThrough'); }
   else if (e.key === 'Tab' && caretBlock()?.closest('li')) { e.preventDefault(); noteCmd(e.shiftKey ? 'outdent' : 'indent'); }
 });
 notesEl.addEventListener('click', e => {
@@ -4494,7 +4683,11 @@ notesEl.addEventListener('drop', e => {
 for (const b of document.querySelectorAll('.notes-tools button')) b.addEventListener('mousedown', e => e.preventDefault());
 for (const b of document.querySelectorAll('.notes-tools [data-cmd]')) b.addEventListener('click', () => noteCmd(b.dataset.cmd));
 on('#nBlock', 'change', e => { noteCmd('formatBlock', `<${e.target.value}>`); });
-on('#nTable', 'change', e => { const v = e.target.value; e.target.value = ''; if (v) tableAction(v); });
+for (const id of ['#nMarkBtn', '#nTableBtn']) on(id, 'click', e => toggleMenu(e.currentTarget));
+for (const b of document.querySelectorAll('[data-mark]')) b.addEventListener('click', () => markNotes(b.dataset.mark === 'none' ? null : b.dataset.mark));
+for (const b of document.querySelectorAll('[data-table]')) b.addEventListener('click', () => tableAction(b.dataset.table));
+// Clicking the toolbar doesn't take the cursor out of the notes, so formatting goes where you're typing.
+for (const b of document.querySelectorAll('.notes-tools button')) b.addEventListener('mousedown', e => e.preventDefault());
 on('#nLink', 'click', addLink);
 on('#nImage', 'click', () => $('#notesImg').click());
 on('#notesImg', 'change', e => { const fs = [...e.target.files]; e.target.value = ''; insertNoteImages(fs); });
@@ -4908,7 +5101,7 @@ function noteMarkAt(e) {
   return node ? noteMarks().find(f => f.node === node && offset >= f.start && offset <= f.end) : null;
 }
 // Markdown as you type, like Obsidian: "# " heading, "- " list, "1. " numbered list, "> " quote at the
-// start of a line; **bold**, *italic*, `code` and ~~strike~~ when you type the closing marks.
+// start of a line; **bold**, *italic*, `code`, ~~strike~~ and ==highlight== when you type the closing marks.
 function markdownShortcut(ch) {
   const sel = getSelection();
   if (!sel.rangeCount || !sel.isCollapsed) return;
@@ -4935,10 +5128,11 @@ function markdownShortcut(ch) {
   }
   const text = node.nodeValue.slice(0, r.startOffset);
   const pats = { '*': [[/\*\*([^*\n]+)\*\*$/, 'b', 0], [/(^|[^*\\])\*([^*\s](?:[^*\n]*[^*\s])?)\*$/, 'i', 1]], '_': [[/__([^_\n]+)__$/, 'b', 0]],
-    '`': [[/`([^`\n]+)`$/, 'code', 0]], '~': [[/~~([^~\n]+)~~$/, 's', 0]] }[ch] || [];
+    '`': [[/`([^`\n]+)`$/, 'code', 0]], '~': [[/~~([^~\n]+)~~$/, 's', 0]], '=': [[/==([^=\n]+)==$/, 'mark', 0]] }[ch] || [];
   for (const [re, tag, pre] of pats) {
     const m = text.match(re);
     if (!m) continue;
+    saveNotesStep();
     const range = document.createRange();
     range.setStart(node, r.startOffset - m[0].length + (pre ? m[1].length : 0)); range.setEnd(node, r.startOffset);
     range.deleteContents();
@@ -5341,7 +5535,7 @@ svg.addEventListener('dblclick', e => {
 
 /* ---------- version, installing and updates ---------- */
 // build.py stamps these into each release; the source copy says 'dev' and never looks for updates.
-const APP_VERSION = '2026.11.06.1524', APP_UPDATE_URL = 'https://raw.githubusercontent.com/WMBanner/spider-diagram/main/dist/';
+const APP_VERSION = '2026.11.10.1436', APP_UPDATE_URL = 'https://raw.githubusercontent.com/WMBanner/spider-diagram/main/dist/';
 let aboutApp = { version: APP_VERSION, updates: false, canInstall: false, installed: false };
 const INSTALL_STORE = 'spider-diagram:no-install-offer';
 async function loadAbout() {
