@@ -1,9 +1,9 @@
 {
- "version": "2026.11.10.1436",
- "summary": "Notes are much nicer to write in: highlighting, a tidier toolbar, working shortcuts and undo, and fixes for wrapping, spell checking and pasting.",
+ "version": "2026.11.11.1013",
+ "summary": "Tables in notes now work like Google Docs: the arrow keys go up and down columns, Tab moves between boxes, and tables are much easier to see.",
  "sha256": {
-  "spider-diagram-linux": "52678734eeb54ac03fd1d1e6b637853a597e9929a9a2cc02a0655c295e83e6f8",
-  "spider-diagram-windows.cmd": "834e31468a71b23d1892d6ec701be2cc5213709752ef151a5a99b27b8a4e6060",
-  "spider-diagram-chromeos.html": "4a0ab79f581f80f2f8b68f9ac0ab07828ec80f01c8e2b8f1e9bcf20e269b2e6f"
+  "spider-diagram-linux": "54d9add544f683f0b9ecb33b1e617617eb23e29fd6c6f25d7c9b00793bcab41b",
+  "spider-diagram-windows.cmd": "04b5909b86407650202375db538146f0da785019608cf31c08e0135a91617fc7",
+  "spider-diagram-chromeos.html": "ba3ca938060964059c7516f5ea448c4deb0d58c37ccb577c440d07b915088bf2"
  }
 }

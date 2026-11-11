@@ -253,9 +253,16 @@
   #notesBody h3 { font-size: 17px; margin: 14px 0 4px; }
   #notesBody ul, #notesBody ol { margin: 0 0 8px; padding-left: 24px; }
   #notesBody img { display: block; max-width: 100%; height: auto; margin: 8px 0; border-radius: 6px; }
-  #notesBody table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; }
-  #notesBody th, #notesBody td { border: 1px solid var(--line); padding: 6px 8px; vertical-align: top; min-width: 40px; }
-  #notesBody th { background: var(--row2); text-align: left; }
+  /* Tables: columns of equal width that stay put as you type (text wraps inside them), with lines clear
+     enough to see against the panel. */
+  #notesBody table { border-collapse: collapse; width: 100%; table-layout: fixed; margin: 10px 0 14px; }
+  #notesBody th, #notesBody td { border: 1px solid color-mix(in srgb, var(--ink) 32%, var(--panel)); padding: 6px 8px; vertical-align: top; overflow-wrap: break-word; }
+  #notesBody th { background: color-mix(in srgb, var(--ink) 9%, var(--panel)); text-align: left; font-weight: 600; }
+  #notesBody td > :last-child, #notesBody th > :last-child { margin-bottom: 0; }
+  .tbl-pick { display: grid; grid-template-columns: repeat(8, 18px); gap: 3px; padding: 6px 8px 2px; }
+  .tbl-pick button { width: 18px; height: 18px; min-width: 0; padding: 0; border-radius: 3px; border: 1px solid color-mix(in srgb, var(--ink) 25%, var(--panel)); background: var(--panel); }
+  .tbl-pick button.in { background: var(--on-bg); border-color: var(--on-line); }
+  .tbl-size { padding: 2px 10px 4px; font-size: 12.5px; color: var(--muted); }
   #notesBody blockquote { margin: 8px 0; padding: 4px 12px; border-left: 3px solid var(--accent); color: var(--muted); }
   #notesBody pre { margin: 8px 0; padding: 8px 10px; border-radius: 6px; background: var(--row2); white-space: pre-wrap; font: 13px/1.5 ui-monospace, monospace; }
   #notesBody a { color: var(--accent); }
@@ -574,6 +581,11 @@
 <script id="changelog" type="application/json">
 [
  {
+  "version": "2026.11.11.1013",
+  "summary": "Tables in notes now work like Google Docs: the arrow keys go up and down columns, Tab moves between boxes, and tables are much easier to see.",
+  "notes": "The up and down arrows go to the box above or below (and out of the table at the top or bottom), Tab and Shift+Tab go from box to box, and Tab in the last box adds a row. Backspace and Delete no longer merge boxes. Tables have clearer lines, a shaded heading row, and equal columns that stay put as you type. The Table menu has a size picker and can insert rows above or below and columns left or right."
+ },
+ {
   "version": "2026.11.10.1436",
   "summary": "Notes are much nicer to write in: highlighting, a tidier toolbar, working shortcuts and undo, and fixes for wrapping, spell checking and pasting.",
   "notes": "Highlight text in four colours from the new Highlight menu, with Ctrl+Shift+H, or by typing ==text==; highlights keep their colours in Word and copied outlines. The toolbar is two neat rows: text formatting on top (with the paragraph style on the right), lists, links, pictures and tables below. Ctrl+B, Ctrl+I, Ctrl+U and Ctrl+Shift+X format your notes instead of triggering browser shortcuts, and no longer jump the cursor when you type quickly. Notes have their own undo and redo (Ctrl+Z, Ctrl+Y). Lines no longer break in the middle of words, spell and grammar checkers can read sentences that run through formatting, and pasting into notes right after switching windows no longer also pastes a bubble."
@@ -753,12 +765,16 @@
       <span class="nt-group">
         <button id="nImage" title="Insert pictures (you can also paste or drop them in)"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></button>
         <div class="menu-wrap">
-          <button id="nTableBtn" aria-haspopup="true" aria-expanded="false" title="Tables"><svg class="ic" aria-hidden="true"><use href="#i-table"/></svg></button>
+          <button id="nTableBtn" aria-haspopup="true" aria-expanded="false" title="Tables (in a table: Tab and the arrow keys move between boxes)"><svg class="ic" aria-hidden="true"><use href="#i-table"/></svg></button>
           <div id="nTableMenu" class="menu list left nt-menu" hidden>
-            <button data-table="insert">Insert table</button>
+            <div class="tbl-pick" id="tblPick"></div>
+            <div class="tbl-size" id="tblSize">Insert a table</div>
             <hr>
-            <button data-table="row">Add row below</button>
-            <button data-table="col">Add column right</button>
+            <button data-table="rowAbove">Insert row above</button>
+            <button data-table="row">Insert row below<span class="kb">Tab at the end</span></button>
+            <button data-table="colLeft">Insert column left</button>
+            <button data-table="col">Insert column right</button>
+            <hr>
             <button data-table="delrow">Delete row</button>
             <button data-table="delcol">Delete column</button>
             <button data-table="deltable">Delete table</button>
@@ -4596,28 +4612,155 @@ function addLink() {
   if (getSelection().isCollapsed) insertNoteHTML(`<a href="${esc(url)}">${esc(url)}</a>&nbsp;`);
   else noteCmd('createLink', url);
 }
-function tableAction(action) {
+// Tables in notes work like the ones in Google Docs: the top row is the heading row, Tab and
+// Shift+Tab go from box to box (Tab at the very end adds a row), and the up and down arrows go to the
+// box above or below once the cursor is on a box's first or last line.
+const emptyCell = tag => { const c = document.createElement(tag); c.appendChild(document.createElement('br')); return c; };
+// Put the cursor in a box: with all of what's in it selected (as Tab does), or at its start or end.
+function intoCell(cell, where = 'all') {
+  const r = document.createRange(), last = cell.lastChild;
+  r.selectNodeContents(cell);
+  if (last?.nodeName === 'BR') r.setEndBefore(last);   // (the line break that holds an empty box open)
+  if (where !== 'all') r.collapse(where === 'start');
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  cell.scrollIntoView({ block: 'nearest' });
+}
+// The cursor leaves a table off its top or bottom: into what's there, or a new line if nothing is.
+function leaveTable(table, down) {
+  let sib = table;
+  do { sib = down ? sib.nextSibling : sib.previousSibling; } while (sib && sib.nodeType === Node.TEXT_NODE && !sib.nodeValue.trim());
+  if (!sib) {
+    saveNotesStep();
+    sib = document.createElement('p'); sib.appendChild(document.createElement('br'));
+    down ? table.after(sib) : table.before(sib);
+    notesChanged();
+  }
+  if (sib.nodeName === 'TABLE') return intoCell(down ? sib.rows[0].cells[0] : [...sib.rows].at(-1).cells[0], down ? 'start' : 'end');
+  const r = document.createRange();
+  if (sib.nodeType === Node.TEXT_NODE) r.setStart(sib, down ? 0 : sib.nodeValue.length);
+  else if (/^(HR|IMG)$/.test(sib.nodeName)) down ? r.setStartBefore(sib) : r.setStartAfter(sib);
+  else { r.selectNodeContents(sib); if (!down && sib.lastChild?.nodeName === 'BR') r.setEndBefore(sib.lastChild); r.collapse(down); }
+  r.collapse(true);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  (sib.nodeType === Node.TEXT_NODE ? sib.parentElement : sib).scrollIntoView?.({ block: 'nearest' });
+}
+// Where the cursor is on the screen (a box, or null if the browser can't say).
+function caretRect(r) {
+  const rects = r.getClientRects();
+  if (rects.length) return rects[0];
+  const n = r.startContainer, el = n.nodeType === Node.ELEMENT_NODE ? n.childNodes[r.startOffset] || n.childNodes[r.startOffset - 1] : null;
+  const box = el?.nodeType === Node.ELEMENT_NODE ? el.getBoundingClientRect() : null;
+  return box && box.height ? box : null;
+}
+// Put the cursor in a box at about x across, on its first line (edge 'top') or its last ('bottom').
+function intoCellAt(cell, x, edge) {
+  cell.scrollIntoView({ block: 'nearest' });
+  const box = cell.getBoundingClientRect(), all = document.createRange();
+  all.selectNodeContents(cell);
+  const text = all.getBoundingClientRect();
+  const y = edge === 'bottom' && text.height ? text.bottom - 9 : box.top + 17, px = Math.min(Math.max(x, box.left + 4), box.right - 4);
+  let at = null;
+  if (document.caretPositionFromPoint) { const c = document.caretPositionFromPoint(px, y); if (c) at = [c.offsetNode, c.offset]; }
+  else if (document.caretRangeFromPoint) { const c = document.caretRangeFromPoint(px, y); if (c) at = [c.startContainer, c.startOffset]; }
+  if (at && cell.contains(at[0])) getSelection().collapse(at[0], at[1]);
+  else intoCell(cell, edge === 'top' ? 'start' : 'end');
+}
+// A key pressed with the cursor in a table box. Returns whether it was dealt with here.
+function tableKey(e, cell) {
+  const table = cell.closest('table'), sel = getSelection(), k = e.key;
+  if (!table || !notesEl.contains(table) || !sel.rangeCount) return false;
+  const range = sel.getRangeAt(0), endCell = (range.endContainer.nodeType === Node.TEXT_NODE ? range.endContainer.parentNode : range.endContainer).closest?.('td, th');
+  if (k === 'Tab') {
+    const cells = [...table.querySelectorAll('td, th')].filter(c => c.closest('table') === table);
+    let next = cells[cells.indexOf(cell) + (e.shiftKey ? -1 : 1)];
+    if (!next && !e.shiftKey) {   // Tab in the last box: a new row
+      saveNotesStep();
+      const last = [...table.rows].at(-1), row = document.createElement('tr');
+      for (let i = 0; i < last.cells.length; i++) row.appendChild(emptyCell('td'));
+      (table.tBodies[table.tBodies.length - 1] || table.createTBody()).appendChild(row);
+      next = row.cells[0];
+      notesChanged();
+    }
+    if (next) intoCell(next);
+    return true;
+  }
+  if ((k === 'ArrowDown' || k === 'ArrowUp') && !e.shiftKey && sel.isCollapsed) {
+    const down = k === 'ArrowDown', from = caretRect(range);
+    sel.modify('move', down ? 'forward' : 'backward', 'line');   // where the browser would go
+    const now = sel.getRangeAt(0), to = caretRect(now), node = now.startContainer;
+    const still = (node.nodeType === Node.TEXT_NODE ? node.parentNode : node).closest?.('td, th') === cell;
+    if (still && (!from || !to || (down ? to.top > from.top + 2 : to.top < from.top - 2))) return true;   // another line of the same box
+    const rows = [...table.rows], row = rows[rows.indexOf(cell.parentNode) + (down ? 1 : -1)];
+    const x = from ? from.left : cell.getBoundingClientRect().left + 8;
+    if (row) intoCellAt(row.cells[Math.min(cell.cellIndex, row.cells.length - 1)], x, down ? 'top' : 'bottom');
+    else leaveTable(table, down);
+    return true;
+  }
+  if (k === 'Backspace' || k === 'Delete') {
+    if (!sel.isCollapsed) {
+      if (!endCell || endCell === cell) return false;   // within one box: the browser's own delete
+      saveNotesStep();   // across boxes: empty what's selected in each, and keep the boxes
+      for (const c of table.querySelectorAll('td, th')) {
+        if (!range.intersectsNode(c)) continue;
+        const part = document.createRange();
+        part.selectNodeContents(c);
+        if (c === cell) part.setStart(range.startContainer, range.startOffset);
+        if (c === endCell) part.setEnd(range.endContainer, range.endOffset);
+        part.deleteContents();
+        if (!c.textContent && !c.querySelector('img, br')) c.appendChild(document.createElement('br'));
+      }
+      sel.collapse(range.startContainer, range.startOffset);
+      notesChanged();
+      return true;
+    }
+    // At the very start or end of a box there's nothing of its own to delete: don't pull in (or get
+    // pulled into) the box next door.
+    const side = document.createRange();
+    side.selectNodeContents(cell);
+    k === 'Backspace' ? side.setEnd(range.startContainer, range.startOffset) : side.setStart(range.startContainer, range.startOffset);
+    const bit = side.cloneContents();
+    return !side.toString() && !bit.querySelector('img, hr, li') && bit.querySelectorAll('br').length <= (k === 'Delete' ? 1 : 0);
+  }
+  return false;
+}
+function tableAction(action, size = { rows: 3, cols: 3 }) {
   saveNotesStep();
   restoreNotesRange();
-  if (action === 'insert') {
-    const row = tag => `<tr>${`<${tag}><br></${tag}>`.repeat(3)}</tr>`;
-    return insertNoteHTML(`<table><thead>${row('th')}</thead><tbody>${row('td')}${row('td')}</tbody></table><p><br></p>`);
-  }
   const cell = caretBlock()?.closest('td, th'), table = cell?.closest('table');
-  if (!cell) return toast('Put the cursor in a table first');
-  const tr = cell.parentNode, col = [...tr.children].indexOf(cell), rows = [...table.querySelectorAll('tr')];
-  if (action === 'row') {
-    const r = document.createElement('tr');
-    for (let i = 0; i < tr.children.length; i++) r.appendChild(document.createElement('td')).appendChild(document.createElement('br'));
-    (tr.parentNode.tagName === 'THEAD' ? table.tBodies[0] || table.createTBody() : tr.parentNode).insertBefore(r, tr.parentNode.tagName === 'THEAD' ? (table.tBodies[0]?.firstChild || null) : tr.nextSibling);
-  } else if (action === 'col') {
-    for (const r of rows) { const c = document.createElement(r.parentNode.tagName === 'THEAD' ? 'th' : 'td'); c.appendChild(document.createElement('br')); r.insertBefore(c, r.children[col + 1] || null); }
-  } else if (action === 'delrow') {
-    tr.remove();
-  } else if (action === 'delcol') {
-    for (const r of rows) r.children[col]?.remove();
+  if (action === 'insert') {
+    if (table) { const r = document.createRange(); r.setStartAfter(table); r.collapse(true); getSelection().removeAllRanges(); getSelection().addRange(r); }   // not a table inside a table
+    const row = tag => `<tr>${`<${tag}><br></${tag}>`.repeat(size.cols)}</tr>`, had = new Set(notesEl.querySelectorAll('table'));
+    insertNoteHTML(`<table><thead>${row('th')}</thead>${size.rows > 1 ? `<tbody>${row('td').repeat(size.rows - 1)}</tbody>` : ''}</table><p><br></p>`);
+    const made = [...notesEl.querySelectorAll('table')].find(t => !had.has(t));
+    if (made) intoCell(made.rows[0].cells[0], 'start');   // ready to type in its first box
+    return;
   }
-  if (action === 'deltable' || !table.querySelector('td, th')) table.remove();
+  if (!cell) return toast('Put the cursor in a table first');
+  const tr = cell.parentNode, col = cell.cellIndex, rows = [...table.rows], ri = rows.indexOf(tr), head = tr.parentNode.tagName === 'THEAD';
+  const body = () => table.tBodies[0] || table.createTBody(), newRow = tag => { const r = document.createElement('tr'); for (let i = 0; i < tr.cells.length; i++) r.appendChild(emptyCell(tag)); return r; };
+  const retag = (row, tag) => { for (const c of [...row.cells]) { const n = document.createElement(tag); n.append(...c.childNodes); c.replaceWith(n); } };
+  let go = null;   // the box the cursor ends up in, if the one it was in has gone
+  if (action === 'row') head ? body().prepend(newRow('td')) : tr.after(newRow('td'));
+  else if (action === 'rowAbove') {
+    if (head) { tr.before(newRow('th')); retag(tr, 'td'); body().prepend(tr); go = tr.cells[col]; }   // the new top row is the heading row now (the cursor stays in its box, which is a new element)
+    else tr.before(newRow('td'));
+  }
+  else if (action === 'col' || action === 'colLeft') {
+    for (const r of rows) { const c = emptyCell(r.parentNode.tagName === 'THEAD' ? 'th' : 'td'), ref = r.cells[col]; ref ? (action === 'col' ? ref.after(c) : ref.before(c)) : r.appendChild(c); }
+  }
+  else if (action === 'delrow') {
+    const next = rows[ri + 1] || rows[ri - 1];
+    tr.remove();
+    if (head && next) { retag(next, 'th'); (table.tHead || table.createTHead()).appendChild(next); }   // the next row up becomes the heading row
+    go = next?.cells[Math.min(col, next.cells.length - 1)];
+  }
+  else if (action === 'delcol') {
+    for (const r of rows) r.cells[col]?.remove();
+    go = tr.cells[Math.min(col, tr.cells.length - 1)];
+  }
+  for (const part of table.querySelectorAll('thead, tbody')) if (!part.rows.length) part.remove();
+  if (action === 'deltable' || !table.querySelector('td, th')) { leaveTable(table, true); table.remove(); }
+  else if (go) intoCell(go, 'end');
   notesChanged();
 }
 
@@ -4654,6 +4797,7 @@ notesEl.addEventListener('keydown', e => {
   else if (mod && !e.altKey && !e.shiftKey && ['b', 'i', 'u'].includes(k)) { e.preventDefault(); noteCmd({ b: 'bold', i: 'italic', u: 'underline' }[k]); }
   else if (mod && e.shiftKey && k === 'x') { e.preventDefault(); noteCmd('strikeThrough'); }
   else if (e.key === 'Tab' && caretBlock()?.closest('li')) { e.preventDefault(); noteCmd(e.shiftKey ? 'outdent' : 'indent'); }
+  else if (!mod && !e.altKey && caretBlock()?.closest('td, th') && tableKey(e, caretBlock().closest('td, th'))) e.preventDefault();
 });
 notesEl.addEventListener('click', e => {
   const mark = (e.ctrlKey || e.metaKey) && noteMarkAt(e);
@@ -4680,10 +4824,22 @@ notesEl.addEventListener('drop', e => {
   insertNoteImages(files);
 });
 // Toolbar buttons mustn't steal the cursor from the notes.
-for (const b of document.querySelectorAll('.notes-tools button')) b.addEventListener('mousedown', e => e.preventDefault());
+// The Table menu's size picker: a grid of squares; point at one for a table that many boxes across and down.
+for (let i = 0; i < 48; i++) {
+  const b = $('#tblPick').appendChild(document.createElement('button')), cols = i % 8 + 1, rows = (i - i % 8) / 8 + 1;
+  b.setAttribute('aria-label', `${cols} by ${rows} table`);
+  const show = on => { [...$('#tblPick').children].forEach((x, j) => x.classList.toggle('in', on && j % 8 < cols && (j - j % 8) / 8 < rows)); $('#tblSize').textContent = on ? `${cols} × ${rows} table` : 'Insert a table'; };
+  b.addEventListener('mouseenter', () => show(true));
+  b.addEventListener('mouseleave', () => show(false));
+  b.addEventListener('click', () => { show(false); closeMenu(); tableAction('insert', { rows, cols }); });
+}
 for (const b of document.querySelectorAll('.notes-tools [data-cmd]')) b.addEventListener('click', () => noteCmd(b.dataset.cmd));
 on('#nBlock', 'change', e => { noteCmd('formatBlock', `<${e.target.value}>`); });
 for (const id of ['#nMarkBtn', '#nTableBtn']) on(id, 'click', e => toggleMenu(e.currentTarget));
+on('#nTableBtn', 'click', () => {   // the row and column items only make sense with the cursor in a table
+  const n = notesRange && notesEl.contains(notesRange.startContainer) ? notesRange.startContainer : null, inTable = !!(n?.nodeType === Node.TEXT_NODE ? n.parentNode : n)?.closest?.('td, th');
+  for (const b of document.querySelectorAll('[data-table]')) b.disabled = !inTable;
+});
 for (const b of document.querySelectorAll('[data-mark]')) b.addEventListener('click', () => markNotes(b.dataset.mark === 'none' ? null : b.dataset.mark));
 for (const b of document.querySelectorAll('[data-table]')) b.addEventListener('click', () => tableAction(b.dataset.table));
 // Clicking the toolbar doesn't take the cursor out of the notes, so formatting goes where you're typing.
@@ -5790,7 +5946,8 @@ const TUT_STEPS = [
     done: () => all().some(n => n.img) },
   { title: 'Notes', seed: true, target: '#bNotes',
     text: () => `<p>For anything too long for a bubble, select it and click ${ui('Notes')} (<kbd>Ctrl+Enter</kbd>).</p>
-      <p>The notes panel takes headings, lists, bold, links, tables and pictures. Write something, then close the panel.</p>
+      <p>The notes panel takes headings, lists, bold, highlights, links, tables and pictures. Write something, then close the panel.</p>
+      <p>In a table, <kbd>Tab</kbd> goes to the next box (and adds a row at the end), and the arrow keys go up and down the columns.</p>
       <p class="tip">Markdown works as you type (<b>#</b> heading, <b>-</b> list, <b>**bold**</b>). Write <b>[[Name]]</b> to link to another bubble, and <b>#tags</b> to tag this one: tags show on the bubble, and <kbd>/</kbd> finds any bubble by name or tag.</p>`,
     done: () => !notesOpen() && all().some(n => n.notes && n.notes.replace(/<[^>]*>/g, '').trim()) },
   { title: 'Fold branches away', seed: true, target: '#bCollapse',
