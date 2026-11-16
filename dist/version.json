@@ -1,9 +1,9 @@
 {
- "version": "2026.11.16.1805",
- "summary": "Fixes for Safari on Mac: dragging on the diagram no longer selects text, and the toolbar no longer scrolls out of view.",
+ "version": "2026.11.16.1838",
+ "summary": "A friendlier tutorial: one clear thing to do at each step, a Show me button, and a practice diagram made for each feature.",
  "sha256": {
-  "spider-diagram-linux": "b91a0f31a9fa6c5bec816ae306371a6415e222c30f3acdb9e3e94bfb6a861535",
-  "spider-diagram-windows.cmd": "f882da3cda02e2156f8581430e61f2b01d765e733246ee317cf6242243fae715",
-  "spider-diagram-chromeos.html": "a9517b6193b8ff6613476477c5d4191a2ea5c3977bffcaf3528140bd7b2b1d85"
+  "spider-diagram-linux": "2326fb10fc8e0c287a3f998f03573538b2471ace684d938aa0c91a45188b29f5",
+  "spider-diagram-windows.cmd": "e6b369528a8f69a4680f52800aab2858f52c826e5c35a744fa8b99597bbd583b",
+  "spider-diagram-chromeos.html": "b58e8c9beb1bb0d03fa1df8f4daf70609d3bbb1040023ea4415038c495853744"
  }
 }

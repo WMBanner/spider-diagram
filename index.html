@@ -150,31 +150,52 @@
   .dlg .row { display: flex; gap: 8px; margin-top: 8px; }
   .dlg .row .grow { flex: 1; }
   #tut {
-    position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 460px; max-height: calc(100vh - 32px); overflow: auto;
-    display: flex; flex-direction: column; gap: 10px; padding: 16px 20px 18px;
-    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--menu-shadow); font-size: 15.5px; line-height: 1.5;
+    position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 400px; max-height: calc(100vh - 32px); overflow: auto;
+    display: flex; flex-direction: column; gap: 9px; padding: 14px 18px 16px;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--menu-shadow); font-size: 14.5px; line-height: 1.45;
   }
-  @media (max-width: 600px) { #tut { left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 46vh; padding: 12px 14px; font-size: 14px; } #tutTitle { font-size: 18px; } }
-  .tut-head { display: flex; align-items: center; color: var(--muted); font-size: 13px; font-weight: 600; }
+  @media (max-width: 600px), (max-height: 560px) { #tut { left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 46vh; padding: 10px 14px; font-size: 13.5px; gap: 7px; } #tutTitle { font-size: 17px; } }
+  @media (max-height: 560px) and (min-width: 601px) { #tut { left: auto; width: 380px; max-height: calc(100vh - 20px); } }
+  .tut-head { display: flex; align-items: center; color: var(--muted); font-size: 12.5px; font-weight: 600; }
   .tut-head button { padding: 2px; border: 0; background: none; color: var(--muted); }
-  .tut-bar { height: 6px; border-radius: 2px; background: var(--hover); overflow: hidden; }
+  .tut-bar { height: 5px; border-radius: 2px; background: var(--hover); overflow: hidden; }
   .tut-bar i { display: block; height: 100%; background: var(--accent); transition: width .25s; }
-  #tutTitle { margin: 2px 0 0; font-size: 21px; }
-  #tutText p { margin: 0 0 7px; }
-  #tutText ul { margin: 0 0 7px; padding-left: 20px; }
+  #tutTitle { margin: 0; font-size: 19px; }
+  .tut-act { border: 2px solid var(--accent); border-radius: 10px; padding: 9px 12px; background: color-mix(in srgb, var(--accent) 9%, var(--panel)); font-size: 15px; }
+  #tutProg:not(:empty) { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+  #tutProg b { color: var(--ink); }
+  #tutHint { margin-top: 8px; padding: 7px 10px; border-radius: 8px; background: color-mix(in srgb, #f59e0b 16%, var(--panel)); font-size: 13.5px; }
+  #tutText { font-size: 13.5px; }
+  #tutText:empty { display: none; }
+  #tutText p { margin: 0 0 6px; }
+  #tutText ul { margin: 0 0 6px; padding-left: 20px; }
   #tutText li { margin-bottom: 3px; }
-  #tutText .tip { color: var(--muted); font-size: 14px; }
-  #tutText kbd { font-size: 13px; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--hover); }
-  .tut-nav button { font-size: 15px; padding: 7px 16px; }
+  #tutText .tip { color: var(--muted); }
+  #tut kbd { font-size: 12.5px; padding: 0 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--hover); white-space: nowrap; }
+  .tut-nav button { font-size: 14px; padding: 6px 14px; }
   #tutNext:disabled { opacity: .45; cursor: not-allowed; }
-  .tut-off { opacity: .3 !important; pointer-events: none !important; filter: grayscale(1); }
-  #tutText b.ui { font-weight: 600; background: var(--hover); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; white-space: nowrap; }
+  body.tutoring .tut-off { display: none !important; }
+  body.tutoring #hints, body.tutoring header .row.tut-empty { display: none; }
+  #tut b.ui { font-weight: 600; background: var(--hover); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; white-space: nowrap; }
   #tutDone { display: flex; align-items: center; gap: 6px; color: #16a34a; font-weight: 600; }
   :root[data-theme="dark"] #tutDone { color: #4ade80; }
-  .tut-nav { display: flex; align-items: center; gap: 6px; }
+  #tutDone small { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .tut-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   #tutExtra { display: flex; gap: 6px; }
   .tut-glow { outline: 2px solid var(--accent) !important; outline-offset: 2px; animation: tutGlow 1.4s ease-in-out infinite; }
   @keyframes tutGlow { 50% { outline-color: transparent; } }
+  #tutPoint, #tutHand { position: fixed; left: 0; top: 0; z-index: 45; pointer-events: none; }
+  #tutPoint svg { display: block; margin: -40px 0 0 -20px; animation: tutBob .9s ease-in-out infinite; filter: drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
+  @keyframes tutBob { 50% { transform: translateY(-8px); } }
+  #tutHand { transition: transform .55s cubic-bezier(.4,0,.2,1); }
+  #tutHand svg { display: block; margin: -3px 0 0 -5px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+  #tutHand::after { content: ""; position: absolute; left: -14px; top: -14px; width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--accent); opacity: 0; }
+  #tutHand.click::after { animation: tutClick .45s ease-out; }
+  @keyframes tutClick { from { opacity: 1; transform: scale(.3); } to { opacity: 0; transform: scale(1.3); } }
+  #tutKey { position: fixed; left: 50%; bottom: 90px; z-index: 46; transform: translateX(-50%); pointer-events: none;
+    font: 600 26px/1 ui-monospace, Menlo, monospace; padding: 12px 20px; border-radius: 12px; background: rgba(20,20,30,.88); color: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+  #tutKey.pop { animation: tutPop .25s ease-out; }
+  @keyframes tutPop { from { transform: translateX(-50%) scale(.7); opacity: 0; } }
   #labelEditor {
     position: absolute; z-index: 2; transform: translate(-50%, -50%); width: 200px; padding: 4px 10px; text-align: center;
     font: 600 13px inherit; font-family: inherit; color: var(--editor-ink); background: var(--editor);
@@ -581,6 +602,11 @@
 <script id="changelog" type="application/json">
 [
  {
+  "version": "2026.11.16.1838",
+  "summary": "A friendlier tutorial: one clear thing to do at each step, a Show me button, and a practice diagram made for each feature.",
+  "notes": "Each step now has a 'Do this' box with live progress, and gentle hints when something isn't quite right (like making a chain of bubbles instead of two side by side). Show me acts the step out for you. Each feature gets its own small practice diagram, the tutorial is split into Basics and More features, toolbar buttons you don't need yet are hidden, and the tutorial waits for you to press Next so you can try things out. It also fits better in smaller windows."
+ },
+ {
   "version": "2026.11.16.1805",
   "summary": "Fixes for Safari on Mac: dragging on the diagram no longer selects text, and the toolbar no longer scrolls out of view.",
   "notes": "Safari ignored the setting that stops text being selected while dragging, so linking bubbles or moving around the diagram could select text instead. Safari also scrolled the whole page when a new bubble's text box opened, which pushed the toolbar out of view until a restart. Both are fixed."
@@ -802,10 +828,14 @@
     <button id="tutClose" class="icon" title="Leave the tutorial (you can restart it from the ? button)"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
   <div class="tut-bar"><i id="tutBar"></i></div>
   <h3 id="tutTitle"></h3>
+  <div id="tutAct" class="tut-act" hidden><div id="tutActText"></div><div id="tutProg"></div><div id="tutHint" hidden></div></div>
   <div id="tutText"></div>
   <div id="tutDone" hidden><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> <span></span></div>
-  <div class="tut-nav"><button id="tutBack">Back</button><span class="spacer"></span><span id="tutExtra"></span><button id="tutNext">Next</button></div>
+  <div class="tut-nav"><button id="tutBack">Back</button><span class="spacer"></span><span id="tutExtra"></span><button id="tutShow" title="Watch this step being done">Show me</button><button id="tutNext">Next</button></div>
 </aside>
+<div id="tutPoint" hidden aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 21 4 11h5V3h6v8h5z" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+<div id="tutHand" hidden aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M5 3l14 8-6 1.5L10 19z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+<div id="tutKey" hidden aria-hidden="true"></div>
 <script type="application/json" id="tourData">{
  "format": "spider-diagram",
  "version": 3,
@@ -1163,6 +1193,14 @@
 }</script>
 <script>
 const $ = s => document.querySelector(s);
+let tut = null;   // the tutorial's current step, while it's running
+// In the tutorial, controls for a feature stay hidden until its own step, so they can't be hit by accident.
+const TUT_FEATURE = { link: 'Link two bubbles', notes: 'Write notes', fold: 'Fold branches away' };
+function tutAllows(f) {
+  if (!tut || tut.step.last) return true;
+  const at = TUT_STEPS.findIndex(s => s.title === TUT_FEATURE[f]);
+  return at < 0 || tut.i >= at;
+}
 const svg = $('#canvas'), world = $('#world'), stage = $('#stage'), editor = $('#editor');
 const FONT = '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif';
 // Branch colours in rainbow order: red, orange, amber, lime, green, teal, blue, indigo, purple, pink.
@@ -1971,11 +2009,11 @@ function scene(ui, theme = appTheme) {
       const label = '+' + (subtree(n.id).length - 1), bw = 14 + label.length * 7;
       body += `<g data-toggle="${n.id}" style="cursor:pointer"><rect x="${bx - bw / 2}" y="${by - 11}" width="${bw}" height="22" rx="11" fill="${c}" stroke="${T.bg}" stroke-width="2"/>`
         + `<text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-family="${FONT}" font-size="12" font-weight="700" fill="${inkOn(c)}">${label}</text></g>`;
-    } else if (ui && sel === n.id && kidCount[n.id]) {
+    } else if (ui && sel === n.id && kidCount[n.id] && tutAllows('fold')) {
       body += `<g data-toggle="${n.id}" style="cursor:pointer"><title>Collapse branch</title><circle cx="${bx}" cy="${by}" r="10" fill="${T.paper}" stroke="${c}" stroke-width="1.6"/>`
         + `<line x1="${bx - 4.5}" y1="${by}" x2="${bx + 4.5}" y2="${by}" stroke="${c}" stroke-width="2" stroke-linecap="round"/></g>`;
     }
-    if (ui && sel === n.id && !editing) {
+    if (ui && sel === n.id && !editing && tutAllows('link')) {
       // Link handle (bottom-left): drag from it to another bubble, or click it and then the other bubble.
       const hx = x + 3, hy = y + g.h - 3;
       body += `<g data-linkstart="${n.id}" style="cursor:crosshair"><title>Drag to another bubble to link them</title>`
@@ -2162,6 +2200,7 @@ function format(fn) {
   commit(); fn(s); render(); autoTidy();
 }
 function reparent(id, target) {
+  seen('reparent');
   const n = N(id), t = N(target), ids = subtree(id);
   n.parent = target;
   delete n.kind;   // a main idea or free bubble dropped onto another bubble becomes part of its tree
@@ -3013,7 +3052,7 @@ function finishEdit(cancel = false) {
   } else {
     n.text = text.trim() ? text : '';
     changed = e.isNew || n.text !== e.orig;
-    if (!e.isNew && n.text !== e.orig) { undoStack.push(e.snap); redoStack = []; markDirty(); renameWikiRefs(e.orig, n.text); }
+    if (!e.isNew && n.text !== e.orig) { seen('edit'); undoStack.push(e.snap); redoStack = []; markDirty(); renameWikiRefs(e.orig, n.text); }
   }
   render();
   if (changed) autoTidy();
@@ -3050,10 +3089,22 @@ function bbox() {
 }
 let pendingFit = false;
 function fit() {
-  const b = bbox(), W = svg.clientWidth, H = svg.clientHeight - 40;
+  const b = bbox();
+  let W = svg.clientWidth, H = svg.clientHeight - 40;
   pendingFit = W <= 0 || H <= 0;   // not laid out yet (e.g. background tab): retry on resize
   if (pendingFit) return;
-  view.k = Math.min(1.4, Math.max(0.15, Math.min(W / (b.w + 120), H / (b.h + 120))));
+  // In the tutorial, keep clear of its card (beside it on a wide screen, above it on a narrow one), and
+  // don't blow a few practice bubbles up huge.
+  const card = tut && !$('#tut').hidden ? $('#tut').getBoundingClientRect() : null, box = svg.getBoundingClientRect();
+  const kFor = (w, h) => Math.min(tut ? 1 : 1.4, Math.max(0.15, Math.min(w / (b.w + 120), h / (b.h + 120))));
+  if (card && card.width) {   // only make room if the diagram would otherwise end up under the card
+    const k = kFor(W, H), right = box.left + W / 2 + b.w / 2 * k, bottom = box.top + H / 2 + b.h / 2 * k;
+    if (right > card.left - 10 && bottom > card.top - 10) {
+      if (card.left - box.left > W * 0.5) W = card.left - box.left - 16;
+      else H = Math.max(120, card.top - box.top - 40);
+    }
+  }
+  view.k = kFor(W, H);
   view.x = W / 2 - (b.x + b.w / 2) * view.k;
   view.y = H / 2 - (b.y + b.h / 2) * view.k;
   applyView();
@@ -3235,6 +3286,7 @@ stage.addEventListener('drop', e => {
 const CLIP_TYPE = 'application/x-spider-diagram';
 let clip = null, clipText = '', pasteTimer = null;
 function copyBranch(id = cur()) {
+  seen('copy');
   const ids = subtree(id), inside = new Set(ids), r = N(id);
   const nodes = ids.map(i => { const n = structuredClone(N(i)); n.x -= r.x; n.y -= r.y; return n; });
   const links = Object.values(doc.links).filter(l => !l.note && inside.has(l.from) && inside.has(l.to)).map(l => structuredClone(l));
@@ -3424,7 +3476,7 @@ document.addEventListener('keydown', e => {
   if (e.target.closest?.('#notes')) return;   // the notes panel handles its own keys
   if (editing || e.target.closest?.('select, input')) return;
   const mod = e.ctrlKey || e.metaKey, k = e.key;
-  if (mod && k === 'Enter') { e.preventDefault(); notesOpen() ? closeNotes() : openNotes(); return; }
+  if (mod && k === 'Enter') { e.preventDefault(); if (notesOpen()) closeNotes(); else if (tutAllows('notes')) openNotes(); return; }
   if (mod) {
     const lk = k.toLowerCase();
     if (lk === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
@@ -3441,7 +3493,7 @@ document.addEventListener('keydown', e => {
     else if (lk === 's') { e.preventDefault(); e.shiftKey ? saveAs() : save(); }
     else if (lk === 'o') { e.preventDefault(); open(); }
     else if (lk === 'e') { e.preventDefault(); e.shiftKey ? exportOutline() : exportPNG(); }
-    else if (k === '/') { e.preventDefault(); toggleCollapse(); }
+    else if (k === '/') { e.preventDefault(); if (tutAllows('fold')) toggleCollapse(); }
     else if (lk === 'b') { e.preventDefault(); toggleBold(); }
     else if (lk === 'i') { e.preventDefault(); toggleItalic(); }
     else if (k === '=' || k === '+') { e.preventDefault(); resize(1); }
@@ -3463,7 +3515,7 @@ document.addEventListener('keydown', e => {
   else if (k === 'ArrowRight') { e.preventDefault(); nav(1, 0); }
   else if (k === 'ArrowUp') { e.preventDefault(); nav(0, -1); }
   else if (k === 'ArrowDown') { e.preventDefault(); nav(0, 1); }
-  else if (k.length === 1 && !e.altKey) { e.preventDefault(); sel = cur(); edit(sel, false, N(sel).text + k); }
+  else if (k.length === 1 && !e.altKey) { e.preventDefault(); sel = cur(); edit(sel, false, (N(sel).text === 'Main idea' ? '' : N(sel).text) + k); }   // the untouched placeholder is replaced
 });
 
 /* ---------- saving & opening (.spider = JSON with images embedded) ---------- */
@@ -5874,7 +5926,6 @@ on('#homeInstallNo', 'click', () => { try { localStorage.setItem(INSTALL_STORE, 
 // A step-by-step lesson on a practice diagram. Each step asks you to do one thing, lights up the controls
 // it needs, and ticks itself off when it sees you've done it (it checks the diagram, and listens for a
 // few actions through seen()). Steps marked optional can be skipped without feeling like cheating.
-let tut = null;
 const TUT_STORE = 'spider-diagram:tutorial';
 function seen(ev) { tut?.seen.add(ev); }
 const DEL_KEY = isMac ? '⌫' : 'Delete';
@@ -5897,206 +5948,466 @@ function tutSeed() {
   layout(); render(); fit();
   toast('Added a few example bubbles to practise on');
 }
+const namedKids = id => kids(id).filter(named);
+const mostKids = (list = all()) => Math.max(0, ...list.map(n => namedKids(n.id).length));
+// Tab on a brand-new bubble goes one level deeper each time: a chain of only-children instead of siblings.
+const chained = () => all().some(n => !isRoot(n) && namedKids(n.id).length === 1 && namedKids(namedKids(n.id)[0].id).length === 1);
+const nodeEl = id => world.querySelector(`[data-id="${id}"]`);
+const pickOther = (not = []) => all().filter(n => !isRoot(n) && named(n) && !not.includes(n.id));
+// "Show me": a pretend pointer and on-screen keys act the step out, using the same code a real press uses.
+const tutWait = ms => new Promise(r => setTimeout(r, ms));
+function tutAlive(i) { if (tut?.i !== i || !tut.demo) throw 'stop'; }
+function tutKeycap(label) {
+  const k = $('#tutKey');
+  k.textContent = isMac ? toMacKeys(label) : label;
+  k.hidden = false; k.classList.remove('pop'); void k.offsetWidth; k.classList.add('pop');
+  clearTimeout(k.t); k.t = setTimeout(() => { k.hidden = true; }, 1100);
+}
+async function tutPress(key, mods = {}) {
+  tutKeycap([mods.ctrl && 'Ctrl', mods.shift && 'Shift', key === 'Delete' ? DEL_KEY : key].filter(Boolean).join('+'));
+  await tutWait(420);
+  (editing ? editor : document.body).dispatchEvent(new KeyboardEvent('keydown', {
+    key, bubbles: true, cancelable: true, shiftKey: !!mods.shift, ctrlKey: !!mods.ctrl && !isMac, metaKey: !!mods.ctrl && isMac }));
+  await tutWait(500);
+}
+async function tutType(text) {
+  for (const ch of text) {
+    if (!editing) return;
+    editor.value += ch; editor.dispatchEvent(new Event('input'));
+    await tutWait(65);
+  }
+  await tutWait(250);
+}
+async function tutHand(target, click = true) {
+  const h = $('#tutHand');
+  const r = target.getBoundingClientRect ? target.getBoundingClientRect() : target;
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  if (h.hidden) {
+    h.style.transition = 'none'; h.style.transform = `translate(${innerWidth / 2}px, ${innerHeight - 60}px)`;
+    h.hidden = false; void h.offsetWidth; h.style.transition = '';
+  }
+  h.style.transform = `translate(${x}px, ${y}px)`;
+  await tutWait(650);
+  if (click) { h.classList.remove('click'); void h.offsetWidth; h.classList.add('click'); await tutWait(250); }
+}
+async function tutSelect(id) {
+  revealNode(id); await tutWait(260);
+  const el = nodeEl(id);
+  if (el) await tutHand(el);
+  sel = id; selLink = null; render();
+  await tutWait(250);
+}
+async function tutNewIdea(key, name) { await tutPress(key); await tutType(name); await tutPress('Enter'); }
+// Point at a toolbar control, opening its drop-down menu first if it's tucked inside one.
+async function tutShowButton(sel) {
+  const el = [...document.querySelectorAll(sel)].find(e => !e.classList.contains('tut-off')) || document.querySelector(sel);
+  if (!el) return;
+  const menu = el.closest('.menu');
+  if (menu?.hidden) { await tutHand(menu.previousElementSibling); menu.previousElementSibling.click(); await tutWait(300); }
+  await tutHand(el, false);
+  el.classList.add('tut-glow');
+}
+// A practice diagram made for one step, so it shows off that step's feature: a main idea and its
+// branches from a nested outline ({ name: [sub, sub] } or { name: { sub: [...] } }).
+const VOLCANO = { 'Causes': ['Plates moving', 'Magma rising'], 'Effects': ['Lava flows', 'Ash clouds'], 'Examples': ['Etna', 'Vesuvius'] };
+function tutScene(main, tree, after, post) {
+  if (editing) finishEdit();
+  if (linkMode) cancelLink();
+  if (notesOpen()) closeNotes();
+  doc = blank(); doc.nodes[0].text = main;
+  const add = (pid, t) => {
+    for (const [name, sub] of Object.entries(Array.isArray(t) ? Object.fromEntries(t.map(x => [x, null])) : t)) {
+      const id = makeChild(pid); N(id).text = name;
+      if (sub) add(id, sub);
+    }
+  };
+  add(0, tree);
+  after?.();
+  undoStack = []; redoStack = [];
+  sel = null; selLink = null;
+  layout(); post?.();
+  render(); fit();
+}
+const byText = t => all().find(n => n.text === t)?.id;
+// Click a toolbar control for real (opening its drop-down first if it's in one).
+async function tutDo(sel) {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  const menu = el.closest('.menu');
+  if (menu?.hidden) { await tutHand(menu.previousElementSibling); menu.previousElementSibling.click(); await tutWait(350); }
+  await tutHand(el); el.click(); await tutWait(400);
+}
+async function tutRename(text) {
+  const box = document.querySelector('input.rename');
+  if (!box) return;
+  box.value = '';
+  for (const ch of text) { box.value += ch; box.dispatchEvent(new Event('input')); await tutWait(60); }
+  await tutWait(250);
+  tutKeycap('Enter'); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+}
+const IDEAS = ['Causes', 'Effects', 'Examples', 'Key words', 'Dates', 'People', 'Places', 'Questions'];
+const ideaName = () => IDEAS.find(t => !all().some(n => n.text === t)) || 'Idea';
+
 const TUT_STEPS = [
-  { title: 'Welcome to Spider Diagram',
-    text: () => `<p>This tutorial walks you through everything the app can do, one small task at a time, on a practice diagram.</p>
-      <p>Each step lights up the buttons you need and ticks itself off once you've done it. You can go back, or skip anything you already know.</p>
-      <p class="tip">It takes about 10 minutes. You can leave at any time with the ${ui('×')}, and restart it later from the ${ui('?')} button at the top.</p>` },
-  { title: 'Name your main idea', target: '#world',
-    text: () => `<p>Every spider diagram starts from a <b>main idea</b> in the middle. It's already selected (the blue dashed outline).</p>
-      <p>Just <b>start typing</b> to replace its text, say the topic you're revising, then press <kbd>Enter</kbd> to finish.</p>
-      <p class="tip">Click a bubble to select it. <kbd>Shift+Enter</kbd> starts a new line inside a bubble; long text wraps by itself.</p>`,
-    done: () => { const m = mains()[0]; return named(m) && m.text !== 'Main idea'; } },
-  { title: 'Add a branch', target: '#bChild',
-    text: () => `<p>With the main idea selected, press <kbd>Tab</kbd> (or ${ui('Insert')} → <b>Branch</b>) to add a branch coming off it.</p>
-      <p>Type its name and press <kbd>Enter</kbd>.</p>`,
-    done: () => branches().length >= 1 },
-  { title: 'Add more branches', target: '#bSibling',
-    text: () => `<p>With a branch selected, press <kbd>Enter</kbd> (or ${ui('Insert')} → <b>Sibling</b>) to add another one next to it.</p>
-      <p>Keep going until your main idea has <b>three branches</b>.</p>
+  { title: 'Welcome to Spider Diagram', part: 0,
+    text: () => `<p>You'll learn by doing, on a practice diagram. Each step has one thing to do, in the blue box. It ticks itself off when you've done it.</p>
+      <p>Stuck? Press ${ui('Show me')} and watch it done for you.</p>
+      <p class="tip">First the <b>basics</b> (about 3 minutes), then, if you like, <b>more features</b>. Leave any time with the ${ui('×')}; the ${ui('?')} button at the top starts it again.</p>` },
+
+  // ----- Part 1: the basics -----
+  { title: 'Name your main idea', part: 1, target: '#world',
+    act: () => `<b>Start typing</b> your topic (say, what you're revising), then press <kbd>Enter</kbd>.`,
+    text: () => `<p>Every spider diagram starts from a <b>main idea</b> in the middle. It's already selected: that's what the blue dashed outline means.</p>
+      <p class="tip"><kbd>Shift+Enter</kbd> starts a new line inside a bubble; long text wraps by itself.</p>`,
+    point: () => mains()[0]?.id,
+    demo: async i => { const m = mains()[0]; await tutSelect(m.id); tutAlive(i); edit(m.id, false, ''); await tutType('Volcanoes'); await tutPress('Enter'); },
+    done: () => mains().some(m => named(m) && m.text !== 'Main idea') },
+  { title: 'Add a branch', part: 1, target: '#bChild',
+    act: () => `With the main idea selected, press <kbd>Tab</kbd>. Type the branch's name, then press <kbd>Enter</kbd>.`,
+    text: () => `<p><kbd>Tab</kbd> adds a branch <b>coming off</b> the selected bubble. (It's also in ${ui('Insert')} → <b>Branch</b>.)</p>`,
+    point: () => all().some(n => !isRoot(n) && named(n)) ? null : mains()[0]?.id,
+    demo: async i => { await tutSelect(mains()[0].id); tutAlive(i); await tutNewIdea('Tab', ideaName()); },
+    done: () => all().some(n => !isRoot(n) && named(n)) },
+  { title: 'Add more branches', part: 1, target: '#bSibling',
+    act: () => `Press <kbd>Enter</kbd> to add another branch <b>next to</b> the selected one. Keep going until your main idea has <b>three</b>.`,
+    text: () => `<p><kbd>Enter</kbd> adds a bubble alongside the selected one; <kbd>Tab</kbd> would go a level deeper.</p>
       <p class="tip">New branches go round clockwise, each in the next colour of the rainbow.</p>`,
-    done: () => branches().length >= 3 },
-  { title: 'Go deeper', target: '#bChild',
-    text: () => `<p>Branches can have branches of their own. Select one of your branches and press <kbd>Tab</kbd> to add an idea under it.</p>
-      <p>Add <b>two ideas</b> under the same branch.</p>
-      <p class="tip">Bubbles that have branches of their own are drawn bolder, so the sections of your diagram stand out.</p>`,
-    done: () => branches().some(b => kids(b.id).filter(named).length >= 2) },
-  { title: 'Move around and edit', seed: true, target: '#world',
-    text: () => `<p>Use the <kbd>←↑↓→</kbd> arrow keys to move the selection from bubble to bubble.</p>
-      <p>Typing on a selected bubble replaces its text. To <b>change</b> the text instead, <b>double-click</b> the bubble: your cursor lands at the end of what's already there.</p>
-      <p>Edit one of your bubbles now.</p>
-      <p class="tip"><kbd>Esc</kbd> cancels an edit.</p>`,
-    start: t => { t.texts = Object.fromEntries(all().map(n => [n.id, n.text])); },
-    done: t => all().some(n => n.id in t.texts && t.texts[n.id] && n.text !== t.texts[n.id] && named(n)) },
-  { title: 'Delete, then undo', seed: true, target: '#bDelete, #bUndo',
-    text: () => `<p>Select a bubble and press <kbd>${DEL_KEY}</kbd> (or the bin button). Its branches go with it.</p>
-      <p>Now bring it back with <kbd>Ctrl+Z</kbd> (or the undo arrow). Everything you do can be undone, and <kbd>Ctrl+Shift+Z</kbd> redoes it.</p>`,
-    done: t => t.seen.has('delete') && t.seen.has('undo') },
-  { title: 'Copy and paste', seed: true, target: '#bCopyBranch, #bPaste, #bPasteKids',
-    text: () => `<p>Select a bubble that has branches and press <kbd>Ctrl+C</kbd>: that copies it with everything under it, notes and pictures included.</p>
-      <p>Then select another bubble and press <kbd>Ctrl+Shift+V</kbd> to give it <b>the same subsections</b>, or <kbd>Ctrl+V</kbd> to paste the whole branch under it.</p>
-      <p class="tip"><kbd>Ctrl+D</kbd> duplicates a bubble next to itself, and an indented list copied from a document pastes in as bubbles. These are in the Edit menu too.</p>`,
-    done: t => t.seen.has('paste') },
-  { title: 'Drag things around', seed: true, target: '#world',
-    text: () => `<p>Drag a bubble and <b>drop it onto another bubble</b> to re-attach it there, as a branch of that bubble. Its own branches come along with it.</p>
-      <p class="tip">New diagrams tidy themselves (Auto-tidy), so a bubble you just move glides back into place. Turn Auto-tidy off in the next step if you'd rather put bubbles exactly where you want; then <kbd>Shift</kbd>+drag moves a single bubble without its branches.</p>
-      <p class="tip">Double-click empty space to add a branch there, off the selected bubble.</p>`,
-    start: t => { t.parents = Object.fromEntries(all().map(n => [n.id, n.parent])); },
-    done: t => all().some(n => n.id in t.parents && n.parent !== t.parents[n.id]) },
-  { title: 'Tidy up', seed: true, target: '#bTidy, #bDiagramMenu',
-    text: () => `<p>New diagrams have <b>Auto-tidy</b> on: they re-arrange themselves neatly every time you add, move or delete something. You can switch it on or off in the ${ui('Diagram')} menu.</p>
-      <p>With it off, the ${ui('Tidy')} button tidies up whenever you ask. Open the ${ui('Diagram')} menu to find the switch, or click ${ui('Tidy')}.</p>
-      <p class="tip">The Diagram menu also changes how wide bubbles get and whether lines are curved or straight.</p>`,
-    done: t => t.seen.has('tidy') || t.seen.has('menu:diagramMenu') },
-  { title: 'Colours', seed: true, target: '#swatches',
-    text: () => `<p>Select a branch, open the colour menu (the coloured dot in the toolbar) and pick a colour. The whole branch changes with it.</p>
-      <p class="tip">Give a bubble the ${ui('Main')} colour and its own branches start a new rainbow, which is handy for grouping. Colours fade to a soft pastel towards the ends of each branch; turn that off in the ${ui('Diagram')} menu. <b>Rainbow colours</b> in the same menu puts every branch back in rainbow order.</p>`,
-    done: t => t.seen.has('color') },
-  { title: 'Formatting', seed: true, target: '#fBold, #fItalic, #fSmaller, #fBigger, #fShape, #fFill', allow: '#fReset',
-    text: () => `<p>Like a word processor, the toolbar formats the selected bubble:</p>
-      <ul><li>bold (<kbd>Ctrl+B</kbd>) and italic (<kbd>Ctrl+I</kbd>)</li>
-      <li>${ui('A−')} ${ui('A+')} for smaller or bigger text</li>
-      <li>${ui('Style')} for the <b>shape</b> (pill, box, ellipse, or just text) and the <b>fill</b></li></ul>
-      <p>Try one or two. ${ui('Style')} → <b>Reset formatting</b> puts a bubble back to normal.</p>`,
-    done: () => all().some(n => n.bold != null || n.italic || n.size || n.shape || n.fill) },
-  { title: 'Pictures', seed: true, optional: true, target: '#iAdd', allow: '#iSize, #iRemove',
-    text: () => `<p>Bubbles can hold a picture. Select one, open the picture menu (the picture icon) and click <b>Picture…</b>, or <b>paste</b> (<kbd>Ctrl+V</kbd>) or <b>drag</b> an image straight onto it.</p>
-      <p>The same menu makes the picture bigger or smaller, or removes it.</p>
-      <p class="tip">No picture to hand? Just skip this one.</p>`,
-    done: () => all().some(n => n.img) },
-  { title: 'Notes', seed: true, target: '#bNotes',
-    text: () => `<p>For anything too long for a bubble, select it and click ${ui('Notes')} (<kbd>Ctrl+Enter</kbd>).</p>
-      <p>The notes panel takes headings, lists, bold, highlights, links, tables and pictures. Write something, then close the panel.</p>
-      <p>In a table, <kbd>Tab</kbd> goes to the next box (and adds a row at the end), and the arrow keys go up and down the columns.</p>
-      <p class="tip">Markdown works as you type (<b>#</b> heading, <b>-</b> list, <b>**bold**</b>). Write <b>[[Name]]</b> to link to another bubble, and <b>#tags</b> to tag this one: tags show on the bubble, and <kbd>/</kbd> finds any bubble by name or tag.</p>`,
-    done: () => !notesOpen() && all().some(n => n.notes && n.notes.replace(/<[^>]*>/g, '').trim()) },
-  { title: 'Fold branches away', seed: true, target: '#bCollapse',
-    text: () => `<p>Select a bubble that has branches and click ${ui('Collapse')} (<kbd>Ctrl+/</kbd>). It folds into a single bubble, with a badge showing how many ideas are tucked away.</p>
-      <p>Click the <b>badge</b> to unfold it again.</p>`,
-    poll: t => { if (all().some(n => n.collapsed)) t.folded = true; },
-    done: t => t.folded && !all().some(n => n.collapsed) },
-  { title: 'Style the lines', seed: true, target: '#bLineMenu',
-    text: () => `<p>Select a bubble (not a main idea), then open the ${ui('Line')} menu to style the line leading to it: <b>solid, dashed or dotted</b>, with <b>arrows</b>, and thin, normal or thick.</p>
-      <p class="tip">${ui('Apply to whole branch')} gives every line in that branch the same look.</p>`,
-    done: () => all().some(n => n.line && Object.keys(n.line).length) },
-  { title: 'Link any two bubbles', seed: true, target: '#bLink',
-    text: () => `<p>Links join any two bubbles, even on different branches, to show how ideas connect.</p>
-      <p>Select a bubble, then drag the small <b>link handle</b> on its bottom-left corner onto another bubble. Or click ${ui('Link')}, then click the other bubble.</p>`,
-    start: t => { t.links = Object.keys(doc.links).length; },
-    done: t => Object.keys(doc.links).length > t.links },
-  { title: 'Style a link', seed: true, target: '#bLineMenu, #swatches',
-    start: () => {   // skipped the last step? make a link to practise on
-      if (Object.keys(doc.links).length) return;
-      const [a, b] = branches(), id = doc.nextId++;
-      commit(); doc.links[id] = { id, from: a.id, to: kids(b.id)[0]?.id ?? b.id }; render();
+    progress: () => `Branches: <b>${Math.min(3, mostKids())}</b> of 3`,
+    hint: () => chained() && mostKids() < 3 ? `You've made a chain, each bubble under the last: <kbd>Tab</kbd> goes a level deeper. Click a branch and press <kbd>Enter</kbd> to add one beside it.` : '',
+    point: () => { const b = mains().flatMap(m => namedKids(m.id)); return sel != null && !isRoot(N(sel) || {}) ? null : b.at(-1)?.id ?? mains()[0]?.id; },
+    demo: async i => {
+      const hub = all().reduce((a, n) => namedKids(n.id).length > namedKids(a.id).length ? n : a, mains()[0]);
+      while (namedKids(hub.id).length < 3) {
+        const last = namedKids(hub.id).at(-1);
+        if (last) { await tutSelect(last.id); tutAlive(i); await tutNewIdea('Enter', ideaName()); }
+        else { await tutSelect(hub.id); tutAlive(i); await tutNewIdea('Tab', ideaName()); }
+        tutAlive(i);
+      }
     },
-    text: () => `<p>Click on a link to select it. Then use the ${ui('Line')} menu to give it arrows or a different style, or pick a colour for it.</p>
-      <p>Links can say what the connection is, too: <b>double-click</b> a link (or select it and just start typing) to give it a label like <i>worked for</i>.</p>
-      <p class="tip">Links shade from one bubble's colour to the other's. To see links with the same label in one colour, turn on ${ui('Colour links by label')} in the ${ui('Diagram')} menu. <kbd>${DEL_KEY}</kbd> deletes a selected link.</p>`,
-    done: () => Object.values(doc.links).some(l => l.style || l.arrow || l.width || l.color || l.label) },
-  { title: 'More than one main idea', target: '#bMain',
-    text: () => `<p>One file can hold several main ideas, for example every topic in a unit. Open ${ui('Insert')}, choose <b>Main idea</b>, type a name and press <kbd>Enter</kbd>.</p>
-      <p class="tip">Give it a branch or two if you like. Links can join bubbles under different main ideas.</p>`,
-    start: t => { t.mains = mains().length; },
-    done: t => mains().filter(named).length > t.mains },
-  { title: 'Free bubbles', target: '#bFree',
-    text: () => `<p>A <b>free bubble</b> floats on its own, handy for loose notes or ideas you'll sort out later. Open ${ui('Insert')}, choose <b>Free bubble</b> and give it some text.</p>
-      <p class="tip">Or click empty space to select nothing, then double-click there. Drop a free bubble onto another bubble to attach it.</p>`,
-    done: () => all().some(n => isFree(n) && named(n)) },
-  { title: 'Fold everything', target: '#bDiagramMenu',
-    text: () => `<p>Open the ${ui('Diagram')} menu and click <b>Fold main ideas</b>. Each main idea folds down to one bubble, and they pack together in a honeycomb.</p>
-      <p>Then click <b>Expand all</b> in the same menu to open everything back up.</p>
-      <p class="tip"><b>Fold branches</b> keeps just the sections showing, which is good for a quick overview.</p>`,
-    done: t => t.seen.has('fold:mains') && t.seen.has('fold:false') },
-  { title: 'Zoom and pan', target: '#bFit',
-    text: () => `<p>${isMac ? '<b>Pinch</b> to zoom, and <b>scroll</b> or drag the background' : '<b>Scroll</b> to zoom in and out, and <b>drag the background</b>'} to move around.</p>
-      <p>Then click ${ui('Fit')} (<kbd>Ctrl+0</kbd>) to bring the whole diagram back into view.</p>
-      <p class="tip">Selecting a bubble with the arrow keys scrolls it into view too.</p>`,
+    done: () => mostKids() >= 3 },
+  { title: 'Go deeper', part: 1, target: '#bChild, #bSibling',
+    scene: () => { if (!all().some(n => !isRoot(n) && named(n))) tutScene(mains()[0]?.text && mains()[0].text !== 'Main idea' ? mains()[0].text : 'Volcanoes', { 'Causes': [], 'Effects': [], 'Examples': [] }); },
+    act: () => `Click one of your branches and press <kbd>Tab</kbd> to add an idea <b>under</b> it. Then press <kbd>Enter</kbd> (not Tab) to add a <b>second</b> idea under the same branch.`,
+    text: () => `<p>Branches can have branches of their own.</p>
+      <p class="tip">Bubbles that have branches of their own are drawn bolder, so the sections of your diagram stand out.</p>`,
+    progress: () => `Ideas under one branch: <b>${Math.min(2, mostKids(all().filter(n => !isRoot(n))))}</b> of 2`,
+    hint: () => chained() ? `That's a chain: each <kbd>Tab</kbd> goes one level deeper. Select the first idea you added and press <kbd>Enter</kbd> to put the next one beside it.` : '',
+    point: () => sel != null && N(sel) && !isRoot(N(sel)) ? null : mains().flatMap(m => namedKids(m.id))[0]?.id,
+    demo: async i => {
+      const b = all().filter(n => !isRoot(n) && named(n)).sort((x, y) => namedKids(y.id).length - namedKids(x.id).length)[0];
+      const under = namedKids(b.id);
+      if (!under.length) { await tutSelect(b.id); tutAlive(i); await tutNewIdea('Tab', ideaName()); }
+      else await tutSelect(under.at(-1).id);
+      tutAlive(i);
+      if (namedKids(b.id).length < 2) await tutNewIdea('Enter', ideaName());
+    },
+    done: () => all().some(n => !isRoot(n) && namedKids(n.id).length >= 2) },
+  { title: 'Change a bubble', part: 1, target: '#world',
+    scene: () => tutScene('Volcanoes', { ...VOLCANO, 'Examples': ['Etna', 'Vesuvious'] }),
+    act: () => `One bubble is spelt wrong: <b>Vesuvious</b>. <b>Double-click</b> it, fix the spelling, then press <kbd>Enter</kbd>.`,
+    text: () => `<p>Double-clicking puts your cursor at the end of what's already there. (Or select a bubble and press <kbd>Space</kbd>.)</p>
+      <p class="tip">The <kbd>←↑↓→</kbd> arrow keys move from bubble to bubble, and <kbd>Esc</kbd> cancels an edit.</p>`,
+    start: t => { t.count = all().length; },
+    point: () => byText('Vesuvious'),
+    hint: t => all().length > t.count ? `That added a <b>new</b> bubble (<kbd>Tab</kbd>, <kbd>Enter</kbd> and double-clicking empty space all do). To change one that's already there, double-click <b>on</b> it.` : '',
+    demo: async i => {
+      const id = byText('Vesuvious') ?? pickOther().at(-1).id;
+      revealNode(id); await tutWait(260); await tutHand(nodeEl(id)); await tutHand(nodeEl(id)); tutAlive(i);
+      edit(id);
+      for (let k = 0; k < 3; k++) { await tutWait(160); editor.value = editor.value.slice(0, -1); editor.dispatchEvent(new Event('input')); }
+      await tutType('us'); await tutPress('Enter');
+    },
+    done: t => t.seen.has('edit') },
+  { title: 'Delete, then undo', part: 1, target: '#bDelete, #bUndo',
+    scene: () => tutScene('Volcanoes', { ...VOLCANO, 'Causes': ['Plates moving', 'Magma rising', 'Pizza'] }),
+    act: () => `<b>Pizza</b> doesn't belong here. Click it and press <kbd>${DEL_KEY}</kbd>. Then press <kbd>Ctrl+Z</kbd> to see it come back.`,
+    text: () => `<p>Deleting a bubble takes its branches with it. Everything can be undone (also the undo arrow at the top), and <kbd>Ctrl+Shift+Z</kbd> redoes it.</p>`,
+    progress: t => `${t.seen.has('delete') ? '✓' : '○'} Deleted &nbsp; ${t.seen.has('undo') ? '✓' : '○'} Undone`,
+    point: t => t.seen.has('delete') ? null : byText('Pizza'),
+    demo: async i => {
+      if (!tut.seen.has('delete')) { await tutSelect(byText('Pizza') ?? pickOther().at(-1).id); tutAlive(i); await tutPress('Delete'); }
+      tutAlive(i); await tutWait(400); await tutPress('z', { ctrl: true });
+    },
+    done: t => t.seen.has('delete') && t.seen.has('undo') },
+  { title: 'Link two bubbles', part: 1, target: '#bLink',
+    scene: () => tutScene('Volcanoes', { 'Causes': ['Plates moving', 'Magma rising'], 'Effects': ['Earthquakes', 'Lava flows'] }),
+    act: () => `Plates moving <b>cause</b> earthquakes. Click <b>Plates moving</b>, then drag the small <b>link handle</b> on its corner onto <b>Earthquakes</b>.`,
+    text: () => `<p>Links show how ideas connect, even across branches. (Or click ${ui('Link')} at the top, then click the other bubble.)</p>`,
+    start: t => { t.links = Object.keys(doc.links).length; },
+    point: () => sel != null && N(sel) && sel === byText('Plates moving') ? { handle: sel } : linkMode ? byText('Earthquakes') : byText('Plates moving'),
+    progress: () => sel != null && sel === byText('Plates moving') ? 'Now drag from the handle (the little link circle) to Earthquakes' : '',
+    demo: async i => {
+      const from = byText('Plates moving') ?? pickOther()[0].id, to = N(byText('Earthquakes') ?? pickOther([from]).at(-1).id);
+      await tutSelect(from); tutAlive(i);
+      const h = world.querySelector(`[data-linkstart="${from}"]`);
+      if (h) await tutHand(h);
+      startLink(from, true);
+      const a = N(from), r = svg.getBoundingClientRect();
+      for (let s = 1; s <= 12; s++) {
+        tutAlive(i);
+        const p = { x: a.x + (to.x - a.x) * s / 12, y: a.y + (to.y - a.y) * s / 12 };
+        previewLink(p);
+        await tutHand({ left: r.left + view.x + p.x * view.k, top: r.top + view.y + p.y * view.k, width: 0, height: 0 }, false);
+      }
+      finishLink(to.id);
+    },
+    done: t => Object.keys(doc.links).length > t.links },
+  { title: 'Write notes', part: 1, scene: () => tutScene('Volcanoes', VOLCANO), target: '#bNotes', allow: '#notes',
+    act: () => `Click <b>Etna</b> and then ${ui('Notes')} (or press <kbd>Ctrl+Enter</kbd>). Write something about it, then close the notes with the ${ui('×')}.`,
+    point: () => notesOpen() || sel === byText('Etna') ? null : byText('Etna'),
+    text: () => `<p>Notes hold anything too long for a bubble: headings, lists, highlights, tables and pictures.</p>
+      <p class="tip">Write <b>[[Name]]</b> to link to another bubble and <b>#tags</b> to tag this one; <kbd>/</kbd> finds any bubble by name or tag.</p>`,
+    progress: () => notesOpen() ? 'Now write something, then close the panel' : '',
+    demo: async i => {
+      const n = N(byText('Etna')) || pickOther()[0];
+      await tutSelect(n.id); tutAlive(i);
+      await tutHand($('#bNotes')); openNotes(n.id); await tutWait(300);
+      for (const ch of 'In Sicily. Erupts every few years.') { tutAlive(i); document.execCommand('insertText', false, ch); await tutWait(45); }
+      flushNotes(); await tutWait(400);
+      await tutHand($('#notesClose')); closeNotes();
+    },
+    done: () => !notesOpen() && all().some(n => n.notes && n.notes.replace(/<[^>]*>/g, '').trim()) },
+  { title: 'Move around', part: 1, target: '#bFit',
+    scene: () => tutScene('Volcanoes', { 'Causes': { 'Plates moving': ['Destructive', 'Constructive'], 'Magma rising': ['Hot spots'] },
+      'Effects': { 'Lava flows': ['Buried towns'], 'Ash clouds': ['Flights stopped', 'Cooler summers'] }, 'Examples': ['Etna', 'Vesuvius', 'Mauna Loa', 'Eyjafjallajökull'],
+      'Living near them': ['Fertile soil', 'Tourism', 'Warning systems'] }, () => {}),
+    act: () => `${isMac ? '<b>Pinch</b> to zoom, and <b>scroll</b> or drag the background' : '<b>Scroll</b> to zoom, and <b>drag the background</b>'} to move around. Then click ${ui('Fit')} to see everything again.`,
+    text: () => `<p class="tip">${ui('Fit')} is also <kbd>Ctrl+0</kbd>. Selecting a bubble with the arrow keys scrolls it into view too.</p>`,
+    progress: t => `${t.moved ? '✓' : '○'} Moved &nbsp; ${t.seen.has('fit') ? '✓' : '○'} Fit`,
     start: t => { t.view = { ...view }; },
+    demo: async i => {
+      const v0 = { ...view };
+      for (let s = 1; s <= 12; s++) { tutAlive(i); view.x = v0.x + s * 12; view.k = v0.k * (1 + s * 0.04); applyView(); await tutWait(40); }
+      await tutWait(300); tutAlive(i);
+      await tutHand($('#bFit')); $('#bFit').click();
+    },
     done: t => t.seen.has('fit') && t.moved,
     poll: t => { if (Math.abs(view.k / t.view.k - 1) > 0.05 || Math.hypot(view.x - t.view.x, view.y - t.view.y) > 40) t.moved = true; } },
-  { title: 'Name the diagram', target: '#docname',
-    text: () => `<p>Click the name at the top left (it says <b>Unsaved diagram</b> for now) to give this diagram its own title, then press <kbd>Enter</kbd>.</p>
-      <p class="tip">Without a title, a diagram is named after its file, or its main ideas.</p>`,
-    done: () => !!doc.title },
-  { title: 'Saving', optional: true, target: '#bSave', allow: '#bSaveAs',
-    text: () => `<p>${ui('File')} → <b>Save</b> (<kbd>Ctrl+S</kbd>) keeps your diagram as a <b>.spider</b> file, which you can open again later and keep editing.</p>
-      ${HOST ? `<p>The ${ui('home')} button at the top left closes the diagram (asking to save first) and shows all your diagrams, which you can search by title, bubbles and notes. Try it after the tutorial: it would close this practice diagram.</p>` : `<p class="tip">Your work is also kept in this browser as you go, so a closed tab doesn't lose it, but saving a file is safer.</p>`}
-      <p class="tip">You don't have to save this practice diagram, so you can skip this.</p>`,
+  { title: 'Saving', part: 1, optional: true, target: '#bSave, #bFileMenu', allow: '#bSaveAs',
+    act: () => `Open ${ui('File')} and click <b>Save</b> (<kbd>Ctrl+S</kbd>), or skip this for the practice diagram.`,
+    text: () => `<p>A diagram saves as a <b>.spider</b> file, which you can open again later and keep editing.</p>
+      ${HOST ? `<p class="tip">The ${ui('home')} button at the top left shows all your diagrams, searchable by title, bubbles and notes.</p>` : `<p class="tip">Your work is also kept in this browser as you go, but saving a file is safer.</p>`}`,
+    demo: async () => tutShowButton('#bSave'),
     done: t => t.seen.has('save') },
-  { title: 'Exporting', target: '#bExportMenu',
-    text: () => `<p>Open the ${ui('Export')} menu to see what you can make from a diagram:</p>
-      <ul><li>a <b>PNG picture</b>, at up to 4× size, in light or dark, optionally with a transparent background</li>
-      <li>an <b>outline</b> as a Word document (opens in Google Docs too), Markdown or plain text, with your notes and links included</li></ul>
-      <p class="tip">Copy puts either one on the clipboard, ready to paste.</p>`,
+  { title: 'You know the basics!', part: 1, checkpoint: true,
+    text: () => `<p>That's all you need to make a spider diagram: <kbd>Tab</kbd> for a branch, <kbd>Enter</kbd> for one beside it, double-click to change one, and links between ideas.</p>
+      <p>Carry on to learn the rest (colours, formatting, pictures, folding, exporting and more), or finish here and come back later with the ${ui('?')} button.</p>` },
+
+  // ----- Part 2: more features -----
+  { title: 'Copy and paste', part: 2,
+    scene: () => tutScene('Countries', { 'France': ['Capital', 'Language', 'Food'], 'Spain': [], 'Italy': [] }),
+    point: t => t.seen.has('copy') ? byText('Spain') : byText('France'), target: '#bCopyBranch, #bPaste, #bPasteKids, #bEditMenu',
+    act: () => `Spain needs the same sections as France. Click <b>France</b> and press <kbd>Ctrl+C</kbd>. Then click <b>Spain</b> and press <kbd>Ctrl+Shift+V</kbd>.`,
+    text: () => `<p>Copying takes the bubble with everything under it. <kbd>Ctrl+Shift+V</kbd> pastes just its sub-ideas, to give another bubble <b>the same subsections</b>.</p>
+      <p class="tip"><kbd>Ctrl+D</kbd> duplicates a bubble, and an indented list copied from a document pastes in as bubbles. These are all in ${ui('Edit')}.</p>`,
+    demo: async i => {
+      await tutSelect(byText('France')); tutAlive(i); await tutPress('c', { ctrl: true }); tutAlive(i);
+      await tutSelect(byText('Spain')); tutAlive(i); await tutPress('v', { ctrl: true, shift: true });
+    },
+    done: t => t.seen.has('paste') },
+  { title: 'Drag things around', part: 2, target: '#world',
+    scene: () => tutScene('Volcanoes', { ...VOLCANO, 'Causes': ['Plates moving', 'Magma rising', 'Lava flows'], 'Effects': ['Ash clouds'] }),
+    act: () => `<b>Lava flows</b> is an effect, not a cause. Drag it and <b>drop it onto Effects</b>.`,
+    point: () => byText('Lava flows'),
+    text: () => `<p class="tip">With Auto-tidy on, a bubble dragged into empty space glides back into place. Turn Auto-tidy off (next step) to put bubbles exactly where you want; then <kbd>Shift</kbd>+drag moves one without its branches.</p>`,
+    demo: async i => {
+      const leaf = N(byText('Lava flows')), to = N(byText('Effects'));
+      await tutSelect(leaf.id); tutAlive(i); await tutHand(nodeEl(to.id), false); tutAlive(i);
+      commit(); reparent(leaf.id, to.id); render(); autoTidy();
+    },
+    done: t => t.seen.has('reparent') },
+  { title: 'Tidy up', part: 2, target: '#bTidy, #bDiagramMenu',
+    scene: () => tutScene('Volcanoes', VOLCANO, () => { doc.settings.autoTidy = false; },
+      () => { for (const n of all()) if (!isRoot(n)) { n.x += Math.sin(n.id * 7) * 130; n.y += Math.cos(n.id * 5) * 90; } }),
+    act: () => `Auto-tidy is off here, and it's a mess. Click ${ui('Tidy')} to sort it out.`,
+    text: () => `<p>New diagrams tidy themselves every time you change something. With Auto-tidy off, ${ui('Tidy')} tidies whenever you ask.</p>
+      <p class="tip">The Diagram menu also changes how wide bubbles get and whether lines are curved or straight.</p>`,
+    demo: async () => { await tutShowButton('#bTidy'); await tutHand($('#bTidy')); $('#bTidy').click(); },
+    done: t => t.seen.has('tidy') || t.seen.has('menu:diagramMenu') },
+  { title: 'Colours', part: 2, scene: () => tutScene('Volcanoes', VOLCANO), target: '#swatches',
+    act: () => `Select a branch, open the colour menu (the coloured dot at the top) and pick a colour.`,
+    text: () => `<p class="tip">The whole branch changes with it. Give a bubble the ${ui('Main')} colour and its own branches start a new rainbow, handy for grouping.</p>`,
+    demo: async i => { await tutSelect(byText('Effects') ?? pickOther()[0].id); tutAlive(i); await tutDo('#swatches [data-c]:nth-child(6)'); },
+    done: t => t.seen.has('color') },
+  { title: 'Formatting', part: 2, scene: () => tutScene('Volcanoes', VOLCANO), point: () => sel == null ? byText('Effects') : null, target: '#fBold, #fItalic, #fSmaller, #fBigger, #fShape, #fFill', allow: '#fReset',
+    act: () => `Select a bubble and try ${ui('B')} bold, ${ui('I')} italic, ${ui('A+')} bigger text, or a new shape from ${ui('Style')}.`,
+    text: () => `<p class="tip">${ui('Style')} → <b>Reset formatting</b> puts a bubble back to normal. Bold and italic are <kbd>Ctrl+B</kbd> and <kbd>Ctrl+I</kbd>.</p>`,
+    demo: async i => { await tutSelect(byText('Effects') ?? pickOther()[0].id); tutAlive(i); await tutDo('#fBold'); },
+    done: () => all().some(n => n.bold != null || n.italic || n.size || n.shape || n.fill) },
+  { title: 'Pictures', part: 2, scene: () => tutScene('Volcanoes', VOLCANO), optional: true, target: '#iAdd', allow: '#iSize, #iRemove',
+    act: () => `Select a bubble, open the picture menu and click <b>Picture…</b>, or paste or drag an image onto it. (No picture to hand? Skip this.)`,
+    text: () => `<p class="tip">The same menu makes the picture bigger or smaller, or removes it.</p>`,
+    demo: async () => tutShowButton('#iAdd'),
+    done: () => all().some(n => n.img) },
+  { title: 'Fold branches away', part: 2, target: '#bCollapse',
+    scene: () => tutScene('Volcanoes', { ...VOLCANO, 'Examples': ['Etna', 'Vesuvius', 'Mauna Loa', 'Fuji', 'Krakatoa', 'St Helens', 'Pinatubo', 'Stromboli'] }),
+    point: t => t.folded ? null : byText('Examples'),
+    act: () => `<b>Examples</b> is getting crowded. Click it, then ${ui('Collapse')} to fold it away. Then click its <b>number badge</b> to unfold it.`,
+    text: () => `<p class="tip">Folding tucks a branch into one bubble; the badge says how many ideas are inside. <kbd>Ctrl+/</kbd> does it too.</p>`,
+    progress: t => `${t.folded ? '✓' : '○'} Folded &nbsp; ${t.folded && !all().some(n => n.collapsed) ? '✓' : '○'} Unfolded`,
+    poll: t => { if (all().some(n => n.collapsed)) t.folded = true; },
+    demo: async i => {
+      const id = byText('Examples');
+      if (!N(id).collapsed) { await tutSelect(id); tutAlive(i); await tutHand($('#bCollapse')); $('#bCollapse').click(); await tutWait(900); tutAlive(i); }
+      const badge = world.querySelector(`[data-toggle="${id}"]`);
+      if (badge) await tutHand(badge);
+      toggleCollapse(id);
+    },
+    done: t => t.folded && !all().some(n => n.collapsed) },
+  { title: 'Style the lines', part: 2, scene: () => tutScene('Volcanoes', VOLCANO), target: '#bLineMenu',
+    act: () => `Select a bubble (not a main idea), open the ${ui('Line')} menu and pick a style: dashed, dotted, arrows or thickness.`,
+    text: () => `<p class="tip">${ui('Apply to whole branch')} gives every line in that branch the same look.</p>`,
+    demo: async i => { await tutSelect(pickOther().filter(n => !kids(n.id).length)[0].id); tutAlive(i); await tutDo('#lineMenu [data-prop="style"] [data-v="dashed"]'); },
+    done: () => all().some(n => n.line && Object.keys(n.line).length) },
+  { title: 'Style a link', part: 2, target: '#bLineMenu, #swatches',
+    scene: () => tutScene('Volcanoes', { 'Causes': ['Plates moving', 'Magma rising'], 'Effects': ['Earthquakes', 'Lava flows'] }, () => {
+      const id = doc.nextId++; doc.links[id] = { id, from: byText('Plates moving'), to: byText('Earthquakes') };
+    }),
+    act: () => `Click the link between <b>Plates moving</b> and <b>Earthquakes</b>. Give it an arrow with the ${ui('Line')} menu, or <b>double-click</b> it and label it <i>cause</i>.`,
+    text: () => `<p class="tip">Links shade from one bubble's colour to the other's; ${ui('Colour links by label')} in the ${ui('Diagram')} menu colours them by label instead. <kbd>${DEL_KEY}</kbd> deletes a selected link.</p>`,
+    demo: async i => {
+      const id = Object.keys(doc.links)[0], el = world.querySelector(`[data-link="${id}"]`);
+      if (el) await tutHand(el);
+      selLink = +id; sel = null; render(); await tutWait(300); tutAlive(i);
+      await tutDo('#lineMenu [data-prop="arrow"] [data-v="end"]');
+    },
+    done: () => Object.values(doc.links).some(l => l.style || l.arrow || l.width || l.color || l.label) },
+  { title: 'More than one main idea', part: 2, target: '#bMain',
+    act: () => `Open ${ui('Insert')}, choose <b>Main idea</b>, type a name and press <kbd>Enter</kbd>.`,
+    text: () => `<p class="tip">One file can hold several main ideas, for example every topic in a unit. Links can join bubbles under different ones.</p>`,
+    start: t => { t.mains = mains().length; },
+    demo: async i => { await tutDo('#bMain'); tutAlive(i); await tutType('Earthquakes'); await tutPress('Enter'); },
+    done: t => mains().filter(named).length > t.mains },
+  { title: 'Free bubbles', part: 2, target: '#bFree',
+    act: () => `Open ${ui('Insert')}, choose <b>Free bubble</b> and type something.`,
+    text: () => `<p class="tip">A free bubble floats on its own, for loose notes. Or click empty space and double-click there. Drop it onto another bubble to attach it.</p>`,
+    demo: async i => { await tutDo('#bFree'); tutAlive(i); await tutType('Ask about this'); await tutPress('Enter'); },
+    done: () => all().some(n => isFree(n) && named(n)) },
+  { title: 'Fold everything', part: 2,
+    scene: () => tutScene('Volcanoes', VOLCANO, () => {
+      let o = 1;
+      for (const [main, tree] of [['Earthquakes', { 'Causes': ['Faults'], 'Measuring': ['Richter scale', 'Seismometers'] }], ['Tsunamis', { 'Causes': ['Undersea quakes'], 'Effects': ['Flooding'] }]]) {
+        const id = doc.nextId++;
+        doc.nodes[id] = { id, text: main, x: 0, y: 0, parent: null, kind: 'main', color: ROOT_FILL, order: o++ };
+        for (const [b, subs] of Object.entries(tree)) { const c = makeChild(id); N(c).text = b; for (const t of subs) N(makeChild(c)).text = t; }
+      }
+    }),
+    target: '#bCollapseMains, #bExpandAll, #bDiagramMenu',
+    act: () => `In the ${ui('Diagram')} menu, click <b>Fold main ideas</b>, then <b>Expand all</b>.`,
+    text: () => `<p class="tip"><b>Fold branches</b> keeps just the sections showing, good for a quick overview.</p>`,
+    progress: t => `${t.seen.has('fold:mains') ? '✓' : '○'} Folded &nbsp; ${t.seen.has('fold:false') ? '✓' : '○'} Expanded`,
+    demo: async i => { if (!tut.seen.has('fold:mains')) await tutDo('#bCollapseMains'); tutAlive(i); await tutWait(900); await tutDo('#bExpandAll'); },
+    done: t => t.seen.has('fold:mains') && t.seen.has('fold:false') },
+  { title: 'Name the diagram', part: 2, target: '#docname',
+    act: () => `Click the name at the top left (<b>Unsaved diagram</b>), type a title and press <kbd>Enter</kbd>.`,
+    text: () => `<p class="tip">Without a title, a diagram is named after its file, or its main ideas.</p>`,
+    demo: async i => { await tutHand($('#docname')); $('#docname').click(); await tutWait(300); tutAlive(i); await tutRename('Volcanoes revision'); },
+    done: () => !!doc.title },
+  { title: 'Exporting', part: 2, target: '#bExportMenu',
+    act: () => `Open the ${ui('Export')} menu to see what you can make.`,
+    text: () => `<ul><li>a <b>picture</b> (PNG), light or dark, up to 4× size</li>
+      <li>an <b>outline</b> for Word or Google Docs, Markdown or plain text, with your notes and links</li></ul>`,
+    demo: async () => tutDo('#bExportMenu'),
     done: t => t.seen.has('menu:exportMenu') },
-  { title: 'Dark mode', optional: true, target: '#bTheme',
-    text: () => `<p>The ${ui(appTheme === 'dark' ? 'sun' : 'moon')} button switches between light and dark mode. Try it, and switch back if you prefer.</p>`,
+  { title: 'Dark mode', part: 2, optional: true, target: '#bTheme',
+    act: () => `Click the ${ui(appTheme === 'dark' ? 'sun' : 'moon')} button to switch between light and dark.`,
+    demo: async () => tutDo('#bTheme'),
     done: t => t.seen.has('theme') },
-  { title: "You're all set",
-    text: () => `<p>That's everything! A few things to remember:</p>
-      <ul><li><kbd>Tab</kbd> adds a branch, <kbd>Enter</kbd> adds a sibling, and you just type to fill them in</li>
-      <li>the ${ui('Shortcuts')} button at the bottom left lists every keyboard shortcut</li>
+  { title: "You're all set", part: 2, last: true,
+    text: () => `<p>A few things to remember:</p>
+      <ul><li><kbd>Tab</kbd> adds a branch, <kbd>Enter</kbd> adds one beside it, double-click changes one</li>
+      <li>the ${ui('Shortcuts')} button at the bottom left lists the keys</li>
       <li>the ${ui('?')} button at the top starts this tutorial again</li></ul>
-      <p>You can keep this practice diagram, start a new one, or open an example that shows lots of features together.</p>`,
-    last: true },
+      <p>Keep this practice diagram, start a new one, or open an example that shows lots of features together.</p>` },
 ];
+const tutPart = p => TUT_STEPS.filter(s => s.part === p);
 function startTutorial() {
   if (!okToReplace()) return;
   if (editing) finishEdit();
   flushNotes(); closeNotes(); commit(); dropPendingNotes();
   doc = blank(); sel = 0; selLink = null;
-  render(); setFile(null); hideHome(); fit();
+  render(); setFile(null); hideHome();
   showTutStep(0);
+  fit();
 }
 function showTutStep(i) {
   const step = TUT_STEPS[i];
   if (tut?.timer) clearTimeout(tut.timer);
-  tut = { i, step, seen: new Set(), done: false, timer: null };
+  if (tut?.unlock) clearTimeout(tut.unlock);
+  tut = { i, step, seen: new Set(), done: false, timer: null, demo: false };
   try { localStorage.setItem(TUT_STORE, String(i)); } catch {}
-  if (step.seed) tutSeed();
-  step.start?.(tut);
-  const fmt = h => isMac ? toMacKeys(h) : h;
+  document.body.classList.add('tutoring');
   $('#tut').hidden = false;
-  $('#tutCount').textContent = step.last ? 'Tutorial complete' : `Step ${i + 1} of ${TUT_STEPS.length - 1}` + (step.optional ? ' (optional)' : '');
-  $('#tutBar').style.width = (100 * i / (TUT_STEPS.length - 1)) + '%';
+  const steps = tutPart(step.part), k = steps.indexOf(step);
+  $('#tutCount').textContent = step.last ? 'Tutorial complete' : step.part === 0 ? 'Tutorial'
+    : `${step.part === 1 ? 'Basics' : 'More features'} · step ${k + 1} of ${steps.length - (step.checkpoint || step.part === 2 ? 1 : 0)}` + (step.optional ? ' (optional)' : '');
+  if (step.checkpoint) $('#tutCount').textContent = 'Basics complete';
+  $('#tutBar').style.width = (step.part === 0 ? 0 : 100 * (k + (step.checkpoint || step.last ? 1 : 0)) / steps.length) + '%';
   $('#tutTitle').textContent = step.title;
-  $('#tutText').innerHTML = fmt(step.text());
+  $('#tutAct').hidden = !step.act;
+  $('#tutActText').innerHTML = step.act ? keys(step.act()) : '';
+  $('#tutText').innerHTML = step.text ? keys(step.text()) : '';
+  $('#tutProg').innerHTML = ''; $('#tutHint').hidden = true;
   $('#tutDone').hidden = true;
   $('#tutBack').hidden = i === 0;
-  $('#tutExtra').innerHTML = step.last ? `<button data-end="example">Open example</button><button data-end="new">New diagram</button>` : '';
+  $('#tutShow').hidden = !step.demo; $('#tutShow').disabled = false;
+  $('#tutExtra').innerHTML = step.last ? `<button data-end="example">Open example</button><button data-end="new">New diagram</button>`
+    : step.checkpoint ? `<button data-end="finish">Finish here</button>` : '';
   const next = $('#tutNext');
-  // Required steps can't be skipped: Next only unlocks once the step is done. Optional ones can be.
-  next.textContent = step.last ? 'Keep this one' : step.optional ? 'Skip' : i === 0 ? "Let's go" : 'Next';
+  // Required steps unlock Next once they're done, or after a while anyway, so nobody gets stuck.
+  next.textContent = step.last ? 'Keep this one' : step.checkpoint ? 'Learn more' : step.optional ? 'Skip' : i === 0 ? "Let's go" : 'Next';
   next.disabled = !!step.done && !step.optional;
   next.title = next.disabled ? 'Do the step above to carry on' : '';
   next.classList.toggle('primary', !step.done);
+  if (next.disabled) tut.unlock = setTimeout(() => { if (tut?.step === step && !tut.done) { next.disabled = false; next.textContent = 'Skip'; next.title = ''; } }, 30000);
   for (const el of document.querySelectorAll('.tut-glow')) el.classList.remove('tut-glow');
   if (step.target && step.target !== '#world') for (const el of document.querySelectorAll(step.target)) {
     el.classList.add('tut-glow');
     el.closest('.menu')?.previousElementSibling?.classList.add('tut-glow');   // tucked in a drop-down: light up its button
   }
+  if (step.scene) step.scene(); else if (step.seed) tutSeed();
+  step.start?.(tut);
   tutLock(step);
+  render();   // show or hide the controls this step allows
+  tutTick();
 }
 function tutTick() {
-  if (!tut || tut.done || !tut.step.done) return;
-  tut.step.poll?.(tut);
-  if (!tut.step.done(tut)) return;
+  if (!tut) return;
+  const step = tut.step;
+  if (!tut.done) {
+    step.poll?.(tut);
+    const prog = step.progress?.(tut) || '', hint = step.hint?.(tut) || '';
+    if ($('#tutProg').dataset.v !== prog) { $('#tutProg').dataset.v = prog; $('#tutProg').innerHTML = keys(prog); }
+    if ($('#tutHint').dataset.v !== hint) { $('#tutHint').dataset.v = hint; $('#tutHint').innerHTML = keys(hint); $('#tutHint').hidden = !hint; }
+  }
+  if (tut.done || !step.done || !step.done(tut)) return;
   tut.done = true;
+  $('#tutProg').innerHTML = ''; $('#tutProg').dataset.v = ''; $('#tutHint').hidden = true; $('#tutHint').dataset.v = '';
   const d = $('#tutDone');
-  d.querySelector('span').textContent = ['Nice!', 'Done!', 'Got it!', 'Perfect!'][tut.i % 4];
+  d.querySelector('span').innerHTML = ['Nice!', 'Done!', 'Got it!', 'Perfect!'][tut.i % 4] + ' <small>Try it some more if you like, then press Next.</small>';
   d.hidden = false;
+  $('#tutShow').hidden = true;
   $('#tutNext').textContent = 'Next';
   $('#tutNext').disabled = false; $('#tutNext').title = '';
   $('#tutNext').classList.add('primary');
   for (const el of document.querySelectorAll('.tut-glow')) el.classList.remove('tut-glow');
-  const i = tut.i;
-  tut.timer = setTimeout(() => { if (tut?.i === i) showTutStep(i + 1); }, 1600);
 }
 setInterval(tutTick, 250);
-// While a step is showing, every toolbar control it doesn't use is greyed out and can't be clicked, so
-// the tutorial can't be wandered away from. (Undo and redo always work.)
-const TUT_CONTROLS = 'header button, header select, header input, #docname, #swatches';
+// The bouncing arrow over the bubble a step wants you to use.
+(function tutPointer() {
+  requestAnimationFrame(tutPointer);
+  const p = $('#tutPoint');
+  const want = tut && !tut.done && !tut.demo && !editing && !linkMode && tut.step.point?.(tut);
+  const el = want == null || want === false ? null : typeof want === 'object' ? world.querySelector(`[data-linkstart="${want.handle}"]`) : nodeEl(want);
+  if (!el) { p.hidden = true; return; }
+  const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect();
+  if (r.bottom < s.top || r.top > s.bottom) { p.hidden = true; return; }
+  p.hidden = false;
+  p.style.transform = `translate(${r.left + r.width / 2}px, ${r.top - 6}px)`;
+})();
+// While a step is showing, toolbar controls it doesn't use are hidden, so there's less to take in and
+// nothing to wander off to. (Undo and redo always stay.)
+const TUT_CONTROLS = 'header button, header select, header input, header label, #docname, #swatches';
 function tutLock(step) {
   const ok = [step.target, step.allow, '#bUndo, #bRedo'].filter(t => t && t !== '#world').join(', ');
   for (const el of document.querySelectorAll(TUT_CONTROLS)) {
@@ -6108,21 +6419,37 @@ function tutLock(step) {
 }
 function endTutorial() {
   if (tut?.timer) clearTimeout(tut.timer);
+  if (tut?.unlock) clearTimeout(tut.unlock);
   tut = null;
+  document.body.classList.remove('tutoring');
+  $('#tutHand').hidden = true; $('#tutPoint').hidden = true;
   setTimeout(showInstallOffer, 800);
   for (const el of document.querySelectorAll('.tut-off')) el.classList.remove('tut-off');
   $('#tut').hidden = true;
   for (const el of document.querySelectorAll('.tut-glow')) el.classList.remove('tut-glow');
   try { localStorage.removeItem(TUT_STORE); } catch {}
+  fit();
 }
 on('#tutNext', 'click', e => { e.currentTarget.blur(); if (tut.step.last) return endTutorial(); showTutStep(tut.i + 1); });
 on('#tutBack', 'click', e => { e.currentTarget.blur(); showTutStep(tut.i - 1); });
+on('#tutShow', 'click', async e => {
+  e.currentTarget.blur();
+  if (!tut || tut.demo) return;
+  const i = tut.i, b = $('#tutShow');
+  tut.demo = true; b.disabled = true;
+  if (editing) finishEdit();
+  try { await tut.step.demo(i); } catch (err) { if (err !== 'stop') console.error(err); }
+  await tutWait(700);
+  $('#tutHand').hidden = true;
+  if (tut?.i === i) { tut.demo = false; b.disabled = false; }
+});
 on('#tutClose', 'click', () => {
   if (tut.step.last || confirm("Leave the tutorial?\n\nIt's the quickest way to learn the app. You can start it again any time from the ? button at the top.")) endTutorial();
 });
 on('#tutExtra', 'click', e => {
   const b = e.target.closest('[data-end]');
   if (!b) return;
+  if (b.dataset.end === 'finish') return showTutStep(TUT_STEPS.length - 1);
   endTutorial();
   if (b.dataset.end === 'example') openTour(); else newDiagram();
 });
