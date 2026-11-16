@@ -1,9 +1,9 @@
 {
- "version": "2026.11.11.1013",
- "summary": "Tables in notes now work like Google Docs: the arrow keys go up and down columns, Tab moves between boxes, and tables are much easier to see.",
+ "version": "2026.11.16.1805",
+ "summary": "Fixes for Safari on Mac: dragging on the diagram no longer selects text, and the toolbar no longer scrolls out of view.",
  "sha256": {
-  "spider-diagram-linux": "54d9add544f683f0b9ecb33b1e617617eb23e29fd6c6f25d7c9b00793bcab41b",
-  "spider-diagram-windows.cmd": "04b5909b86407650202375db538146f0da785019608cf31c08e0135a91617fc7",
-  "spider-diagram-chromeos.html": "ba3ca938060964059c7516f5ea448c4deb0d58c37ccb577c440d07b915088bf2"
+  "spider-diagram-linux": "b91a0f31a9fa6c5bec816ae306371a6415e222c30f3acdb9e3e94bfb6a861535",
+  "spider-diagram-windows.cmd": "f882da3cda02e2156f8581430e61f2b01d765e733246ee317cf6242243fae715",
+  "spider-diagram-chromeos.html": "a9517b6193b8ff6613476477c5d4191a2ea5c3977bffcaf3528140bd7b2b1d85"
  }
 }

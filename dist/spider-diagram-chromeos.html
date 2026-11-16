@@ -37,7 +37,7 @@
   .ic { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; }
   button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
   button .ic.chev { width: 14px; height: 14px; margin: 0 -3px 0 -2px; }
-  html, body { margin: 0; height: 100%; }
+  html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
   body {
     background: var(--bg); color: var(--ink); overflow: hidden;
     font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -92,7 +92,7 @@
   }
   #stage.panning { cursor: grabbing; }
   #stage.dropping { outline: 3px dashed var(--accent); outline-offset: -6px; }
-  #canvas { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+  #canvas { width: 100%; height: 100%; display: block; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   #canvas .node { cursor: pointer; }
   #editor {
     position: absolute; resize: none; overflow: hidden; text-align: center;
@@ -203,7 +203,7 @@
   .notice > span { flex: 1 1 260px; }
   .menu-row .grow { flex: 1; }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
-  #main { flex: 1; display: flex; min-height: 0; }
+  #main { flex: 1; display: flex; min-height: 0; overflow: hidden; }
   #notes {
     position: relative; width: 420px; min-width: 280px; max-width: 70vw; display: flex; flex-direction: column;
     background: var(--panel); border-left: 1px solid var(--line);
@@ -580,6 +580,11 @@
 <!-- What each version changed, newest first: release.py adds an entry, and the menu above shows them. -->
 <script id="changelog" type="application/json">
 [
+ {
+  "version": "2026.11.16.1805",
+  "summary": "Fixes for Safari on Mac: dragging on the diagram no longer selects text, and the toolbar no longer scrolls out of view.",
+  "notes": "Safari ignored the setting that stops text being selected while dragging, so linking bubbles or moving around the diagram could select text instead. Safari also scrolled the whole page when a new bubble's text box opened, which pushed the toolbar out of view until a restart. Both are fixed."
+ },
  {
   "version": "2026.11.11.1013",
   "summary": "Tables in notes now work like Google Docs: the arrow keys go up and down columns, Tab moves between boxes, and tables are much easier to see.",
@@ -2979,7 +2984,7 @@ function edit(id, isNew = false, initial) {
   editor.hidden = false;
   render();
   revealNode(id);
-  editor.focus();
+  editor.focus({ preventScroll: true });
   editor.setSelectionRange(editor.value.length, editor.value.length);   // keep the text, cursor at the end
 }
 function positionEditor() {
@@ -3094,6 +3099,21 @@ function finishLink(to) {
 }
 
 /* ---------- mouse ---------- */
+/* Safari: keep drags on the canvas from selecting text (it ignores user-select without -webkit-), and
+   never let the page itself scroll (Safari scrolls overflow:hidden boxes to show a focused field, which
+   pushed the toolbar off screen until a restart). */
+let canvasDrag = false;
+svg.addEventListener('pointerdown', () => { canvasDrag = true; getSelection()?.removeAllRanges(); }, true);
+addEventListener('pointerup', () => { canvasDrag = false; }, true);
+addEventListener('pointercancel', () => { canvasDrag = false; }, true);
+document.addEventListener('selectstart', e => {
+  const t = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+  if (canvasDrag || t?.closest('#canvas')) e.preventDefault();
+});
+for (const el of [document.documentElement, document.body, $('#main'), stage])
+  el.addEventListener('scroll', () => { if (el.scrollTop || el.scrollLeft) el.scrollTop = el.scrollLeft = 0; });
+addEventListener('scroll', () => { if (scrollX || scrollY) scrollTo(0, 0); });
+
 svg.addEventListener('pointerdown', e => {
   if (e.button !== 0) return;
   if (editing) finishEdit();
@@ -4223,7 +4243,7 @@ function renameDiagram() {
   const label = $('#docname'), box = document.createElement('input');
   box.className = 'rename'; box.value = docTitle(); box.placeholder = 'Name this diagram';
   box.title = 'Enter to rename, Esc to cancel. Leave it empty to name it after its main ideas';
-  label.hidden = true; label.after(box); box.focus(); box.select();
+  label.hidden = true; label.after(box); box.focus({ preventScroll: true }); box.select();
   let done = false;
   const finish = keep => {
     if (done) return;
@@ -4412,7 +4432,7 @@ function openNotes(id = cur(), focus = true) {
   showNotesFor(id);
   render();
   if (focus && notesEl.isContentEditable) {
-    notesEl.focus();
+    notesEl.focus({ preventScroll: true });
     const r = document.createRange(); r.selectNodeContents(notesEl); r.collapse(false);
     getSelection().removeAllRanges(); getSelection().addRange(r);
   }
@@ -4514,7 +4534,7 @@ function restoreNotesRange() {
   // jump the cursor back a few letters.
   const s = getSelection();
   if (document.activeElement === notesEl && s.rangeCount && notesEl.contains(s.getRangeAt(0).commonAncestorContainer)) return;
-  notesEl.focus();
+  notesEl.focus({ preventScroll: true });
   if (notesRange && notesEl.contains(notesRange.commonAncestorContainer)) { const s = getSelection(); s.removeAllRanges(); s.addRange(notesRange); }
 }
 try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch {}   // Enter makes a <p> in every browser
@@ -4912,7 +4932,7 @@ async function showHome() {
   closeMenu();
   homeEl.hidden = false;
   const search = $('#homeSearch');
-  search.focus(); search.select();
+  search.focus({ preventScroll: true }); search.select();
   if (!HOST) {
     library = null;
     $('#homeStatus').textContent = '';
@@ -5036,7 +5056,7 @@ on('#bHome', 'click', closeDiagram);
 function askToLeave() {
   $('#leaveTitle').textContent = `Save changes to “${doc.title || fileName?.replace(/\.(spider|json)$/i, '') || docTitle()}”?`;
   $('#leaveDlg').hidden = false;
-  $('#leaveSave').focus();
+  $('#leaveSave').focus({ preventScroll: true });
   return new Promise(done => {
     const finish = answer => { $('#leaveDlg').hidden = true; $('#leaveDlg').onclick = $('#leaveDlg').onkeydown = null; done(answer); };
     $('#leaveDlg').onclick = e => {
@@ -5069,12 +5089,12 @@ homeEl.addEventListener('keydown', e => {
   const search = $('#homeSearch'), mod = e.ctrlKey || e.metaKey;
   if (e.key === 'Escape') {
     e.preventDefault();
-    if (search.value) { search.value = ''; renderHome(); search.focus(); }
-  } else if (e.key === '/' && e.target !== search) { e.preventDefault(); search.focus(); search.select(); }
+    if (search.value) { search.value = ''; renderHome(); search.focus({ preventScroll: true }); }
+  } else if (e.key === '/' && e.target !== search) { e.preventDefault(); search.focus({ preventScroll: true }); search.select(); }
   else if (e.key === 'Enter' && e.target === search) {   // open the best match
     const first = $('#homeGrid [data-path]');
     if (first) openFromHome(first.dataset.path);
-  } else if (e.key === 'ArrowDown' && e.target === search) { e.preventDefault(); $('#homeGrid [data-path]')?.focus(); }
+  } else if (e.key === 'ArrowDown' && e.target === search) { e.preventDefault(); $('#homeGrid [data-path]')?.focus({ preventScroll: true }); }
   else if (mod && e.key.toLowerCase() === 'o') { e.preventDefault(); open(); }
 });
 
@@ -5145,7 +5165,7 @@ function openFinder() {
   finder.hidden = false;
   finderInput.value = '';
   findBubbles();
-  finderInput.focus();
+  finderInput.focus({ preventScroll: true });
 }
 function closeFinder() { finder.hidden = true; finderInput.blur(); }
 function findBubbles() {
@@ -5667,7 +5687,7 @@ function editLabel(id, initial) {
   Object.assign(labelBox.style, { left: `${view.x + m.x * view.k}px`, top: `${view.y + m.y * view.k}px` });
   labelBox.value = initial ?? l.label ?? '';
   labelBox.hidden = false;
-  labelBox.focus();
+  labelBox.focus({ preventScroll: true });
   labelBox.setSelectionRange(labelBox.value.length, labelBox.value.length);
 }
 function finishLabel(keep) {
@@ -5691,7 +5711,7 @@ svg.addEventListener('dblclick', e => {
 
 /* ---------- version, installing and updates ---------- */
 // build.py stamps these into each release; the source copy says 'dev' and never looks for updates.
-const APP_VERSION = '2026.11.11.1013', APP_UPDATE_URL = 'https://raw.githubusercontent.com/WMBanner/spider-diagram/main/dist/';
+const APP_VERSION = '2026.11.16.1805', APP_UPDATE_URL = 'https://raw.githubusercontent.com/WMBanner/spider-diagram/main/dist/';
 let aboutApp = { version: APP_VERSION, updates: false, canInstall: false, installed: false };
 const INSTALL_STORE = 'spider-diagram:no-install-offer';
 async function loadAbout() {
